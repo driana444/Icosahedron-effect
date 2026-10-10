@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Icosahedron Effect</title>
+<meta name="description" content="The Icosahedron Effect: art and a timeline of every year since 100 A.D.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://driana.org/">
+<meta property="og:image" content="https://driana.org/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://driana.org/share.png">
+<meta property="og:title" content="The Icosahedron Effect">
+<meta property="og:description" content="Pick a century, year, month and day to see the art made for it.">
+<style>
+:root{--forest:#1f6b3f;--bg:#013220;--cell:#02291b;--ink:#cde6d5;--green:#8fd3a8;--line:#10241a;--art:#f0fff0;--c:#0bda51;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+header{max-width:1100px;margin:auto;padding:24px 16px 8px;text-align:center}
+h1{font-size:clamp(2rem,7vw,4rem);line-height:1;margin:0;letter-spacing:0;color:var(--green)}
+#crumbs{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;justify-content:center}
+#crumbs button{font:inherit;border:2px solid var(--green);background:none;color:var(--ink);padding:4px 12px;border-radius:999px;cursor:pointer}
+#crumbs button:last-child{background:var(--forest);color:#eaf7ee}
+main{max-width:1100px;margin:auto;padding:8px 16px 60px}
+h2.c{text-align:center;font-size:2rem;margin:36px 0 10px;color:var(--green)}
+.tl{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;background:var(--forest);padding:3px;border-radius:2px}
+.yb{position:relative;aspect-ratio:28/15;border:0;padding:2px 3px;cursor:pointer;color:var(--ink);font:inherit;font-size:clamp(.62rem,2vw,.95rem);text-align:left;overflow:hidden;
+ background-color:var(--cell);background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:100% calc(100%/15),calc(100%/28) 100%}
+.yb:hover{outline:3px solid var(--art);z-index:1;--line:#245c3a}
+.yb b{background:none;color:var(--green);padding:0 3px;font-weight:700}
+.yb.ev{background-image:none;background-color:var(--forest);color:#eaf7ee}
+.yb.ev b{background:none;color:#eaf7ee}
+.yb small{display:block;line-height:1.05;font-size:.8em}
+.yb.art::after{content:"";position:absolute;right:3px;bottom:3px;width:9px;height:9px;border-radius:50%;background:var(--art)}
+.months{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.m{border:3px solid var(--green);padding:8px;background:none;color:inherit;font:inherit;cursor:pointer;text-align:left}
+.m:hover{background:var(--cell)}
+.m h3{margin:0 0 4px;color:var(--green)}
+.dgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center}
+.dgrid span{font-size:.75rem;opacity:.7}
+.m .dgrid div{font-size:.82rem;padding:1px 0;background:var(--cell)}
+.big .dgrid{gap:4px}
+.d{aspect-ratio:1;border:0;border-radius:4px;font:inherit;cursor:pointer;background:var(--cell);color:var(--ink);outline:1px solid var(--line);display:flex;align-items:flex-start;padding:4px}
+.d:hover{outline:3px solid var(--green)}
+.d.art{background:var(--art);color:#0e2a19}
+.big .hd{font-size:.85rem;opacity:.7;text-align:center}
+:focus-visible{outline:3px solid var(--art)!important;outline-offset:2px}
+dialog{border:0;border-radius:12px;background:var(--bg);color:var(--ink);width:min(520px,92vw);padding:22px}
+dialog::backdrop{background:rgba(0,0,0,.55)}
+dialog h2{margin:0;font-size:1.9rem;color:var(--green);line-height:1.1}
+.slot{aspect-ratio:4/3;border:2px dashed var(--green);border-radius:8px;display:grid;place-items:center;text-align:center;margin:14px 0;overflow:hidden}
+.slot img{width:100%;height:100%;object-fit:contain}
+.row{display:flex;gap:10px;justify-content:space-between;align-items:center}
+.btn{font:inherit;border:2px solid var(--green);background:var(--forest);color:#eaf7ee;padding:8px 14px;border-radius:8px;cursor:pointer}
+.btn.o{background:none;color:var(--ink)}
+.jump{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;padding:0;margin-top:24px}
+.jump button,.pn button{flex:none;font:inherit;border:2px solid var(--green);background:none;color:var(--ink);padding:4px 10px;border-radius:999px;cursor:pointer;min-height:40px}
+.jump button[aria-pressed="true"]{background:var(--forest);color:#eaf7ee}
+.find{display:flex;gap:8px;align-items:center;justify-content:center;margin:10px 0}
+.find input{font:inherit;width:9ch;padding:8px;border:2px solid var(--green);background:var(--cell);color:var(--ink);border-radius:8px}
+.pn{display:flex;justify-content:space-between;gap:8px;margin:12px 0}
+.feat{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.feat button{border:0;padding:0;background:var(--cell);color:var(--ink);font:inherit;cursor:pointer;text-align:left}
+.feat img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+.feat span{display:block;padding:6px 8px;font-size:.85rem}
+.top{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:6;min-height:44px}
+.top[hidden]{display:none}
+#pd,#nd{font-size:.85rem;margin-bottom:4px}
+h1,h2,h3,.yb,.m,.d,.jump button,#crumbs button,.pn button,.find label,.find input{font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.shell{display:grid;grid-template-columns:210px 1fr;min-height:100vh}
+.content{min-width:0}
+#side{position:sticky;top:0;align-self:start;height:100vh;padding:20px 12px;display:flex;flex-direction:column;gap:6px;border-right:3px solid var(--forest)}
+#side button{font:inherit;font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;text-align:left;border:2px solid transparent;background:none;color:var(--ink);padding:10px 12px;border-radius:8px;cursor:pointer;min-height:44px}
+#side button:hover{border-color:var(--green)}
+#side button[aria-current="page"]{background:var(--forest);color:#eaf7ee}
+.home{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-top:10px}
+.box{aspect-ratio:1;border:3px solid var(--forest);color:var(--ink);font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;cursor:pointer;padding:14px;display:flex;flex-direction:column;justify-content:flex-end;gap:4px;text-align:left;background-color:var(--cell);background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:100% calc(100%/14),calc(100%/14) 100%}
+.box b{font-size:clamp(1.1rem,3vw,1.5rem);background:var(--cell);align-self:flex-start;padding:0 4px}
+.box small{font:.85rem system-ui,sans-serif;background:var(--cell);align-self:flex-start;padding:0 4px;color:var(--green)}
+.box:hover{outline:3px solid var(--art)}
+.box.tlb{background-color:var(--forest);background-image:none}
+.box.tlb b,.box.tlb small{background:none;color:#eaf7ee}
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.gal figure{margin:0;background:var(--cell);border:2px solid var(--forest)}
+.gal img{width:100%;aspect-ratio:1;object-fit:cover;display:block;cursor:zoom-in}
+.gal figcaption{padding:10px 12px 12px;font-size:1.05rem}.gal figcaption .ds{margin:10px 0 0;font-size:.95rem;line-height:1.5;opacity:.92}.gal figcaption .dt2{display:block;margin-top:2px;font-size:.85rem;opacity:.75}.gal audio{padding:10px 10px 0;box-sizing:border-box}
+.gal audio,.gal video,.gal iframe{width:100%;display:block;border:0}
+.gal video,.gal iframe{aspect-ratio:16/9}
+.empty{border:2px dashed var(--forest);padding:40px 16px;text-align:center}
+.full{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px}
+.full h3{margin:0 0 4px;text-align:center;color:var(--green)}
+.mini{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;background:none;padding:0}
+.mb{aspect-ratio:1;border:1px solid #1d5236;padding:0;background:var(--cell);color:var(--green);font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:.9rem;font-weight:500;cursor:pointer;display:grid;place-items:center}
+.mb.ev{background:var(--forest);color:#eaf7ee}
+.mb.art{box-shadow:inset 0 0 0 2px var(--art)}
+.mb:hover{outline:2px solid var(--art);z-index:1}
+
+.menu{position:fixed;left:12px;top:calc(12px + env(safe-area-inset-top,0px));z-index:30;font:inherit;font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;min-height:44px;padding:8px 14px;border:0;border-radius:12px;background:#0bda51;color:#013220;cursor:pointer}
+#side{padding-top:70px;overflow-y:auto}
+body.side-closed .shell{grid-template-columns:1fr}
+body.side-closed #side{display:none}
+.cent{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin:2px 0 10px 8px}
+#side .cent button{min-height:40px;padding:6px 8px;font-size:.9rem;text-align:center;border-radius:10px;background:color-mix(in srgb,var(--c) 15%,var(--bg));color:var(--c)}
+#side .cent button.wide{grid-column:span 2}
+#side .cent button[aria-pressed="true"]{background:var(--c);color:#013220}
+@media (max-width:800px){.shell{display:block}#side{position:fixed;left:0;top:0;bottom:0;width:min(290px,86vw);height:auto;z-index:20;background:var(--bg);box-shadow:8px 0 24px rgba(0,0,0,.45)}header{padding-top:68px}}
+h1{font-weight:800;letter-spacing:-.025em}
+h2,h3,.box b{font-weight:700;letter-spacing:-.01em}
+.yb b,.mb,.d,.m .dgrid div{font-variant-numeric:tabular-nums}
+.yb b{font-weight:700}
+.cover{display:block;position:relative;width:min(520px,100%);aspect-ratio:1;margin:8px auto 0;padding:0;border:0;border-radius:20px;overflow:hidden;cursor:pointer;background:color-mix(in srgb,var(--c) 12%,var(--bg))}
+.cover img{width:100%;height:100%;object-fit:cover;display:block}
+.cover .cap{position:absolute;left:0;right:0;bottom:0;padding:48px 18px 16px;text-align:left;color:#f0fff0;background:linear-gradient(transparent,rgba(1,50,32,.92))}
+.cover .cap b{display:block;font-size:1.4rem}.cover .cap small{color:var(--c);font-size:.95rem}
+.cover .dt{display:block;margin-top:2px}
+.dt{font-style:normal;font-weight:500;font-size:.62em;opacity:.8;white-space:nowrap}
+.cover:hover{filter:brightness(1.12)}
+.covers{display:grid;gap:16px}
+.covers.multi{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+.covers.multi .cover{width:100%;margin:0}
+.stage.art{cursor:default;touch-action:auto;display:flex;align-items:center;justify-content:center}.stage.art img{max-width:100%;max-height:100%;object-fit:contain;display:block}
+.stage.art ~ aside .ref img{aspect-ratio:auto;max-height:340px;object-fit:contain;background:#0a2a1e}
+.mdl.solo{grid-template-columns:1fr;justify-items:center;text-align:center}.mdl.solo aside{align-items:center}
+.dcover img{padding:6% 8% 34%!important}.dcover .cap b{font-size:1.02rem;line-height:1.25}
+.mcover img{object-fit:contain;padding:8% 8% 22%;box-sizing:border-box}
+.album{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.thumb{aspect-ratio:1;padding:0;border:0;border-radius:14px;overflow:hidden;cursor:pointer;background:color-mix(in srgb,var(--c) 12%,var(--bg))}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb:hover{filter:brightness(1.15)}
+#lb #lbp,#lb #lbn{min-width:48px;font-size:1.3rem}
+#foot{max-width:1100px;margin:0 auto;padding:30px 16px 40px;text-align:center;font-size:.85rem;opacity:.75}
+/* fun palette, no borders: tiles are told apart by color and space, not lines */
+:root{--green:#0bda51;--hl:#0bda51;--ink:#f0fff0}
+.tl{background:none;padding:0;gap:6px;border-radius:0}
+.yb{border-radius:10px;background-image:none;background-color:color-mix(in srgb,var(--c) 15%,var(--bg));color:var(--c);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2px;outline:0}
+.yb b{background:none;color:var(--c);padding:0;font-size:1.05em}
+.yb small{color:inherit;font-size:.72em;line-height:1.1;max-width:100%}
+.yb.ev{background-color:var(--hl);color:#013220}
+.yb.ev b{color:#013220}
+.yb:hover,.mb:hover,.d:hover,.m:hover,.box:hover{outline:0;filter:brightness(1.3)}
+.yb.art::after,.mb.art::after{background:var(--art);box-shadow:0 0 0 2px var(--bg)}
+.mini{gap:5px;background:none;padding:0}
+.mb{position:relative;border:0;border-radius:6px;background:color-mix(in srgb,var(--c) 15%,var(--bg));color:var(--c);box-shadow:none}
+.mb.ev{background:var(--hl);color:#013220}
+.mb.art::after{content:"";position:absolute;right:2px;top:2px;width:5px;height:5px;border-radius:50%}
+.full h3{color:var(--c)}
+.m{border:0;border-radius:14px;background:color-mix(in srgb,var(--c) 12%,var(--bg))}
+.m h3{color:var(--c)}
+.m:hover{background:color-mix(in srgb,var(--c) 12%,var(--bg))}
+.m .dgrid div{background:none}
+.d{outline:0;border-radius:10px;background:color-mix(in srgb,var(--c) 15%,var(--bg));color:var(--c)}
+.d.art{background:var(--art);color:#013220}
+.box{border:0;border-radius:18px;background-image:none;background-color:color-mix(in srgb,var(--c) 18%,var(--bg));color:var(--c)}
+.box b,.box small{background:none;padding:0;color:inherit}
+.box.tlb{background-color:var(--c);color:#013220}
+.box.tlb b,.box.tlb small{color:#013220}
+#side{border-right:0}
+#side button{border:0;border-radius:12px}
+#side button:hover{background:color-mix(in srgb,var(--c) 14%,var(--bg))}
+#side button[aria-current="page"]{background:#0bda51;color:#013220}
+#crumbs button,.jump button,.pn button,.btn.o{border:0;background:color-mix(in srgb,#0bda51 14%,var(--bg));color:var(--ink)}
+.jump button,.pn button{background:color-mix(in srgb,var(--c) 15%,var(--bg))}
+.jump button[aria-pressed="true"],#crumbs button:last-child{background:var(--c);color:#013220}
+.btn{border:0;background:#0bda51;color:#013220}
+.find input{border:0;background:color-mix(in srgb,var(--c) 15%,var(--bg))}
+.empty,.gal figure{border:0;border-radius:14px;background:color-mix(in srgb,var(--c) 10%,var(--bg))}
+.gal img{border-radius:14px 14px 0 0}
+.slot{border:0;background:color-mix(in srgb,#0bda51 10%,var(--bg))}
+.models{display:grid;gap:28px}
+.mdl{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:18px;align-items:center}
+.stage{position:relative;height:min(62vh,520px);min-height:340px;cursor:grab;touch-action:none}
+.stage:active{cursor:grabbing}.stage canvas{display:block;outline:0}
+.stage .hint{position:absolute;left:0;right:0;bottom:6px;text-align:center;font-size:.9rem;opacity:.65;pointer-events:none}
+.mdl aside{display:flex;flex-direction:column;gap:10px}
+.mdl .ref{padding:0;border:0;border-radius:16px;overflow:hidden;cursor:zoom-in;background:transparent}
+.mdl .ref img{width:100%;display:block;aspect-ratio:1;object-fit:cover}
+.mdl h3{margin:4px 0 0;font-size:1.3rem}.mdl .dt{display:block;font-style:normal;font-weight:500;font-size:.85rem;opacity:.75;margin-top:2px}
+.mdl .ds{margin:0;line-height:1.5;opacity:.92}
+@media(max-width:760px){.mdl{grid-template-columns:1fr}.stage{height:60vh}.mdl aside{flex-direction:row;flex-wrap:wrap;align-items:flex-start}.mdl .ref{width:44%}}
+.full{grid-template-columns:repeat(auto-fill,minmax(430px,1fr));gap:22px 26px}
+.full .cs{display:grid;grid-template-columns:76px minmax(0,1fr);align-items:start;gap:6px;--c:#8fe0ae}
+.full .cs h3{margin:6px 0 0;text-align:right;font-size:1.25rem;font-weight:700;color:#0bda51;letter-spacing:.01em}
+.full .mini{padding:10px;border-radius:16px;background:color-mix(in srgb,#0bda51 7%,var(--bg));gap:2px}
+.full .mb{background:none;color:#9fe3b8;border-radius:8px}
+.full .mb:hover{background:color-mix(in srgb,#0bda51 22%,var(--bg));color:#e9fff1}
+.full .mb.ev{background:none;color:#0bda51;font-weight:800}
+.full .mb.ev::before{content:"";position:absolute;inset:3px;border-radius:50%;background:color-mix(in srgb,#0bda51 20%,transparent);z-index:-1}
+.full .mb.art::after{background:#f5d76e;box-shadow:none}
+@media(max-width:560px){.full{grid-template-columns:1fr}.full .cs{grid-template-columns:56px minmax(0,1fr)}.full .cs h3{font-size:1.05rem}}
+.wcover{aspect-ratio:auto;min-height:170px;background:color-mix(in srgb,var(--c) 14%,var(--bg))}
+.wcover .cap{position:static;display:block;background:none;padding:22px 20px;color:var(--ink)}
+.wcover .cap b{font-size:1.25rem;display:block}.wcover .cap small{display:block;margin-top:10px;color:inherit;opacity:.8;line-height:1.5}
+.post{max-width:680px;margin:0 auto}.post .body p{line-height:1.75;font-size:1.05rem;margin:0 0 1.1em}
+.cmts{margin-top:34px;padding:22px;border-radius:18px;background:color-mix(in srgb,var(--c) 10%,var(--bg))}
+.cmts h3{margin:0 0 12px;color:var(--c)}.cmts h3 small{opacity:.7;font-weight:500}
+.cmts ul{list-style:none;margin:0 0 18px;padding:0;display:grid;gap:12px}
+.cmts li{padding:12px 14px;border-radius:12px;background:color-mix(in srgb,var(--c) 12%,var(--bg))}
+.cmts li p{margin:0 0 6px;line-height:1.6}.cmts li small{opacity:.7}.cmts .none{opacity:.75;margin:0 0 16px}
+.cform label{display:block;margin-bottom:6px;font-weight:600}.cform label small{font-weight:400;opacity:.75}
+.cform textarea{width:100%;box-sizing:border-box;padding:12px;border:0;border-radius:12px;font:inherit;color:var(--ink);background:color-mix(in srgb,var(--c) 14%,var(--bg));resize:vertical}
+.cform textarea::placeholder{color:var(--ink);opacity:.5}
+.cform .crow{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:10px}.cform .cmsg{opacity:.9}
+.cform .cnote{margin:10px 0 0;font-size:.85rem;opacity:.7}.hp{position:absolute;left:-9999px;height:0;overflow:hidden}
+.by{margin:8px 0 0;font-size:clamp(1rem,2.6vw,1.35rem);font-weight:500;letter-spacing:.04em;color:#8fe0ae;opacity:.9}
+</style>
+</head>
+<body>
+<button id="menu" class="menu" aria-controls="side" aria-expanded="true">&#10005; Close</button>
+<div class="shell"><nav id="side" aria-label="Sections"></nav><div class="content">
+<header><h1>The Icosahedron Effect</h1><p class="by">by Dri</p><nav id="crumbs" aria-label="Breadcrumb"></nav></header>
+<main id="main"></main>
+<form name="comments" method="POST" data-netlify="true" netlify-honeypot="bot-field" hidden><input name="bot-field"><input name="post"><textarea name="comment"></textarea></form>
+<footer id="foot"></footer>
+</div></div>
+<button class="btn top" id="top" aria-label="Back to top" hidden>&#x2191; Top</button>
+<dialog id="dlg" aria-labelledby="dt">
+  <div class="row"><h2 id="dt"></h2><button class="btn o" id="close">Close</button></div>
+  <p id="evs"></p>
+  <div class="slot" id="slot"></div>
+  <div class="row"><button class="btn o" id="pd">&#x2039; Previous day</button><button class="btn o" id="nd">Next day &#x203A;</button></div>
+  <div class="row"><span id="cap"></span></div>
+</dialog>
+<dialog id="lb" style="width:min(900px,94vw)" aria-label="Photo viewer"><img id="lbi" alt="" draggable="false" style="width:100%;max-height:78vh;object-fit:contain;display:block"><div class="row" style="margin-top:10px"><button class="btn o" id="lbp" aria-label="Previous photo">&lsaquo;</button><span id="lbc" style="flex:1;text-align:center"></span><button class="btn o" id="lbn" aria-label="Next photo">&rsaquo;</button><button class="btn o" id="lbx">Close</button></div></dialog>
+<script>
+const EVENTS=[["Trans-Atlantic Slave Trade",1526],["Independence Day",1776],["Washington",1789],["Emancipation",1865],["Roosevelt",1901],["Taft",1909],["Wilson",1913],["WW1",1914],["Harding",1921],["Coolidge",1923],["Hoover",1929],["Holocaust",1933],["FDR",1933],["WW2",1939],["Holocaust End",1944],["Truman",1945],["Korean War",1950],["Eisenhower",1953],["Colored TV",1955],["Vietnam War",1955],["Kennedy",1961],["Johnson",1963],["Nixon",1969],["Ford",1974],["Carter",1977],["Reagan",1981],["George H.W. Bush",1989],["Clinton",1993],["Bush",2001],["9/11",2001],["Obama",2009],["Trump",2017],["Biden",2021],["Trump",2025],["Present Day",2026]];
+// Add art: ART["1776-07-04"]={src:"images/file.jpg",title:"Name"}
+const ART={};
+const NOW=2026,MN=["January","February","March","April","May","June","July","August","September","October","November","December"],WD=["S","M","T","W","T","F","S"];
+const byYear={};EVENTS.forEach(([n,y])=>(byYear[y]=byYear[y]||[]).push(n));
+const $=id=>document.getElementById(id),main=$("main"),crumbs=$("crumbs"),dlg=$("dlg");
+let st={y:null,m:null},cur=null,curC=2000,tlScroll=0,page="home",full=false,setIdx=null,lbIndex=0;
+const key=(y,m,d)=>`${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+const hasArt=(y,m)=>Object.keys(ART).some(k=>k.startsWith(m==null?y+"-":y+"-"+String(m+1).padStart(2,"0")));
+function featured(){
+  const k=Object.keys(ART).sort();if(!k.length)return "";
+  return `<h2 class="c" style="margin-top:12px">Featured art</h2><div class="feat">${k.slice(0,8).map(d=>`<button data-art="${d}"><img src="${ART[d].src}" alt="${ART[d].title||d}"><span>${ART[d].title||d}</span></button>`).join("")}</div>`;
+}
+function jump(){
+  let h='<nav class="jump" aria-label="Jump to century"><button data-today>Today</button><button data-full aria-pressed="'+full+'">Full timeline</button>';
+  for(let c=100;c<=2000;c+=100)h+=`<button data-jump="${c}" aria-pressed="${!full&&c==curC}">${c}s</button>`;
+  return h+"</nav>";
+}
+function pn(a,b){return `<div class="pn">${a?`<button data-nav="${a[0]}|${a[1]}">\u2039 ${a[2]}</button>`:"<span></span>"}${b?`<button data-nav="${b[0]}|${b[1]}">${b[2]} \u203A</button>`:"<span></span>"}</div>`}
+function onClick(e){
+  const t=e.target.closest("[data-page],[data-set],[data-back],[data-zoom],[data-ref],[data-jump],[data-full],[data-today],[data-art],[data-nav]");if(!t)return;
+  if(t.dataset.page){nav(t.dataset.page);return}
+  if(t.dataset.set!==undefined){setIdx=+t.dataset.set;render();scrollTo(0,0);return}
+  if("back" in t.dataset){setIdx=null;render();scrollTo(0,0);return}
+  if(t.dataset.ref!==undefined){const L=lbList();const k=L.findIndex(x=>x.i===+t.dataset.ref);showLb(Math.max(k,0));if(!$("lb").open)$("lb").showModal();return}
+  if(t.dataset.zoom!==undefined){showLb(+t.dataset.zoom);if(!$("lb").open)$("lb").showModal();return}
+  if(t.dataset.jump){page="timeline";curC=+t.dataset.jump;full=false;st={y:null,m:null};render();scrollTo(0,0)}
+  else if("full" in t.dataset){const was=page==="timeline"&&full;page="timeline";full=!was;st={y:null,m:null};render();scrollTo(0,0)}
+  else if("today" in t.dataset){page="timeline";full=false;const n=new Date();go(Math.min(n.getFullYear(),NOW),n.getMonth())}
+  else if(t.dataset.art){const [y,m,d]=t.dataset.art.split("-").map(Number);day(y,m-1,d)}
+  else{const [y,m]=t.dataset.nav.split("|");go(+y,m===""?null:+m)}
+}
+main.addEventListener("click",onClick);
+function go(y,m){
+  if(st.y==null&&y!=null)tlScroll=scrollY;
+  st={y,m};if(y!=null)curC=Math.floor(y/100)*100;
+  render();scrollTo(0,y==null?tlScroll:0);
+}
+function search(){return `<form class="find" id="find"><label for="yr">Go to year</label><input id="yr" type="number" min="100" max="${NOW}" inputmode="numeric" placeholder="1776"><button class="btn">Go</button></form>`}
+main.addEventListener("submit",e=>{
+  if(e.target.id!=="find")return;e.preventDefault();
+  const i=document.getElementById("yr");
+  if(!i.checkValidity()||!i.value){i.reportValidity();return}
+  go(+i.value,null);
+});
+function renderTimeline(){
+  const {y,m}=st;
+  main.style.setProperty("--c",hue(y==null?curC:Math.floor(y/100)*100));
+  crumbs.innerHTML="";
+  const add=(t,f)=>{const b=document.createElement("button");b.textContent=t;b.onclick=f;crumbs.append(b)};
+  add("Home",()=>nav("home"));
+  add("Timeline",()=>go(null,null));
+  if(y!=null)add(y,()=>go(y,null));
+  if(m!=null)add(MN[m],()=>go(y,m));
+  if(y==null)return timeline();
+  m==null?year(y):month(y,m);
+}
+function timeline(){
+  if(full)return fullView();
+  let h=featured()+search();
+  for(const c of [curC]){
+    h+=`<h2 class="c" id="c${c}">${c}'s</h2><div class="tl">`;
+    for(let i=0;i<100;i++){
+      const y=c+i;if(y>NOW)break;const ev=byYear[y];
+      h+=`<button class="yb${ev?" ev":""}${hasArt(y)?" art":""}" data-y="${y}" aria-label="${y}${ev?": "+ev.join(", "):""}"><b>${y}</b>${ev?`<small>${ev.join(", ")}</small>`:""}</button>`;
+    }
+    h+="</div>";
+  }
+  main.innerHTML=h;
+  main.querySelectorAll(".yb").forEach(b=>b.onclick=()=>go(+b.dataset.y,null));
+}
+function year(y){
+  const ev=byYear[y];
+  let h=`<h2 class="c" style="text-align:left;margin-top:12px">${y}${ev?" · "+ev.join(", "):""}</h2><div class="months">`;
+  for(let mo=0;mo<12;mo++)h+=`<button class="m" data-m="${mo}"><h3>${MN[mo]}</h3><div class="dgrid">${WD.map(d=>`<span>${d}</span>`).join("")}${cells(y,mo,(d)=>`<div>${d}</div>`)}</div></button>`;
+  main.innerHTML=pn(y>100?[y-1,"",y-1]:null,y<NOW?[y+1,"",y+1]:null)+h+"</div>";
+  main.querySelectorAll(".m").forEach(b=>b.onclick=()=>go(y,+b.dataset.m));
+}
+function cells(y,m,f){
+  const dt=new Date(2000,m,1);dt.setFullYear(y);
+  const first=dt.getDay(),n=new Date(2000,m+1,0).getDate();
+  const len=new Date(Date.UTC(2000,m+1,0));let days=new Date(y,m+1,0).getDate();
+  if(y<100)days=n;
+  let s="<i></i>".repeat(first);for(let d=1;d<=days;d++)s+=f(d);return s;
+}
+function month(y,m){
+  let h=`<div class="big"><h2 class="c" style="text-align:left;margin-top:12px">${MN[m]} ${y}</h2><div class="dgrid">${WD.map(d=>`<div class="hd">${d}</div>`).join("")}`;
+  h+=cells(y,m,d=>`<button class="d${ART[key(y,m,d)]?" art":""}" data-d="${d}" aria-label="${MN[m]} ${d}, ${y}">${d}</button>`);
+  const pv=m?[y,m-1,MN[m-1]]:(y>100?[y-1,11,"December "+(y-1)]:null),nx=m<11?[y,m+1,MN[m+1]]:(y<NOW?[y+1,0,"January "+(y+1)]:null);
+  main.innerHTML=pn(pv,nx)+h+"</div></div>";
+  main.querySelectorAll(".d").forEach(b=>b.onclick=()=>day(y,m,+b.dataset.d));
+}
+function showArt(){
+  const a=ART[cur.k];
+  $("slot").innerHTML=a?`<img src="${a.src}" alt="${a.title||"Artwork"}">`:"<span>No art for this day yet.</span>";
+  $("cap").textContent=a?a.title||"":"";
+}
+function day(y,m,d){
+  cur={y,m,d,k:key(y,m,d)};
+  $("dt").textContent=`${MN[m]} ${d}, ${y}`;
+  const ev=byYear[y];$("evs").textContent=ev?"In "+y+": "+ev.join(", "):"";
+  showArt();if(!dlg.open)dlg.showModal();
+}
+$("close").onclick=()=>dlg.close();
+dlg.addEventListener("click",e=>{if(e.target===dlg)dlg.close()});
+const HUES=["#9fe2bf","#93c572","#64bfa4","#77dd77","#9acd32"];
+const hue=c=>HUES[(c/100-1)%5];
+const PAGE_HUE={home:"#0bda51",timeline:"#0bda51",pictures:"#93c572",printing:"#64bfa4",music:"#77dd77",film:"#9fe2bf",pencil:"#9acd32",vlog:"#7fd99a",variety:"#a7e8a0",writers:"#6fcfb0"};
+const SECTIONS={
+  pictures:{title:"Pictures",kind:"image",sets:[{title:"Illumination",date:"October 1, 2026 · 10 p.m.",items:[{"src": "images/illumination/01.jpg", "thumb": "images/illumination/thumbs/01.jpg", "title": ""}, {"src": "images/illumination/02.jpg", "thumb": "images/illumination/thumbs/02.jpg", "title": ""}, {"src": "images/illumination/03.jpg", "thumb": "images/illumination/thumbs/03.jpg", "title": ""}, {"src": "images/illumination/04.jpg", "thumb": "images/illumination/thumbs/04.jpg", "title": ""}, {"src": "images/illumination/05.jpg", "thumb": "images/illumination/thumbs/05.jpg", "title": ""}, {"src": "images/illumination/06.jpg", "thumb": "images/illumination/thumbs/06.jpg", "title": ""}, {"src": "images/illumination/07.jpg", "thumb": "images/illumination/thumbs/07.jpg", "title": ""}, {"src": "images/illumination/08.jpg", "thumb": "images/illumination/thumbs/08.jpg", "title": ""}, {"src": "images/illumination/09.jpg", "thumb": "images/illumination/thumbs/09.jpg", "title": ""}, {"src": "images/illumination/10.jpg", "thumb": "images/illumination/thumbs/10.jpg", "title": ""}, {"src": "images/illumination/11.jpg", "thumb": "images/illumination/thumbs/11.jpg", "title": ""}, {"src": "images/illumination/12.jpg", "thumb": "images/illumination/thumbs/12.jpg", "title": ""}, {"src": "images/illumination/13.jpg", "thumb": "images/illumination/thumbs/13.jpg", "title": ""}, {"src": "images/illumination/14.jpg", "thumb": "images/illumination/thumbs/14.jpg", "title": ""}, {"src": "images/illumination/15.jpg", "thumb": "images/illumination/thumbs/15.jpg", "title": ""}, {"src": "images/illumination/16.jpg", "thumb": "images/illumination/thumbs/16.jpg", "title": ""}, {"src": "images/illumination/17.jpg", "thumb": "images/illumination/thumbs/17.jpg", "title": ""}, {"src": "images/illumination/18.jpg", "thumb": "images/illumination/thumbs/18.jpg", "title": ""}, {"src": "images/illumination/19.jpg", "thumb": "images/illumination/thumbs/19.jpg", "title": ""}, {"src": "images/illumination/20.jpg", "thumb": "images/illumination/thumbs/20.jpg", "title": ""}, {"src": "images/illumination/21.jpg", "thumb": "images/illumination/thumbs/21.jpg", "title": ""}, {"src": "images/illumination/22.jpg", "thumb": "images/illumination/thumbs/22.jpg", "title": ""}, {"src": "images/illumination/23.jpg", "thumb": "images/illumination/thumbs/23.jpg", "title": ""}, {"src": "images/illumination/24.jpg", "thumb": "images/illumination/thumbs/24.jpg", "title": ""}, {"src": "images/illumination/25.jpg", "thumb": "images/illumination/thumbs/25.jpg", "title": ""}, {"src": "images/illumination/26.jpg", "thumb": "images/illumination/thumbs/26.jpg", "title": ""}, {"src": "images/illumination/27.jpg", "thumb": "images/illumination/thumbs/27.jpg", "title": ""}, {"src": "images/illumination/28.jpg", "thumb": "images/illumination/thumbs/28.jpg", "title": ""}, {"src": "images/illumination/29.jpg", "thumb": "images/illumination/thumbs/29.jpg", "title": ""}, {"src": "images/illumination/30.jpg", "thumb": "images/illumination/thumbs/30.jpg", "title": ""}, {"src": "images/illumination/31.jpg", "thumb": "images/illumination/thumbs/31.jpg", "title": ""}, {"src": "images/illumination/32.jpg", "thumb": "images/illumination/thumbs/32.jpg", "title": ""}, {"src": "images/illumination/33.jpg", "thumb": "images/illumination/thumbs/33.jpg", "title": ""}, {"src": "images/illumination/34.jpg", "thumb": "images/illumination/thumbs/34.jpg", "title": ""}, {"src": "images/illumination/35.jpg", "thumb": "images/illumination/thumbs/35.jpg", "title": ""}, {"src": "images/illumination/36.jpg", "thumb": "images/illumination/thumbs/36.jpg", "title": ""}, {"src": "images/illumination/37.jpg", "thumb": "images/illumination/thumbs/37.jpg", "title": ""}, {"src": "images/illumination/38.jpg", "thumb": "images/illumination/thumbs/38.jpg", "title": ""}, {"src": "images/illumination/39.jpg", "thumb": "images/illumination/thumbs/39.jpg", "title": ""}, {"src": "images/illumination/40.jpg", "thumb": "images/illumination/thumbs/40.jpg", "title": ""}, {"src": "images/illumination/41.jpg", "thumb": "images/illumination/thumbs/41.jpg", "title": ""}, {"src": "images/illumination/42.jpg", "thumb": "images/illumination/thumbs/42.jpg", "title": ""}]},{title:"Terrified",date:"July 9, 2026 · 9 p.m.",items:[{"src": "images/terrified/01.jpg", "thumb": "images/terrified/thumbs/01.jpg", "title": ""}, {"src": "images/terrified/02.jpg", "thumb": "images/terrified/thumbs/02.jpg", "title": ""}, {"src": "images/terrified/03.jpg", "thumb": "images/terrified/thumbs/03.jpg", "title": ""}, {"src": "images/terrified/04.jpg", "thumb": "images/terrified/thumbs/04.jpg", "title": ""}, {"src": "images/terrified/05.jpg", "thumb": "images/terrified/thumbs/05.jpg", "title": ""}, {"src": "images/terrified/06.jpg", "thumb": "images/terrified/thumbs/06.jpg", "title": ""}, {"src": "images/terrified/07.jpg", "thumb": "images/terrified/thumbs/07.jpg", "title": ""}, {"src": "images/terrified/08.jpg", "thumb": "images/terrified/thumbs/08.jpg", "title": ""}, {"src": "images/terrified/09.jpg", "thumb": "images/terrified/thumbs/09.jpg", "title": ""}, {"src": "images/terrified/10.jpg", "thumb": "images/terrified/thumbs/10.jpg", "title": ""}, {"src": "images/terrified/11.jpg", "thumb": "images/terrified/thumbs/11.jpg", "title": ""}, {"src": "images/terrified/12.jpg", "thumb": "images/terrified/thumbs/12.jpg", "title": ""}, {"src": "images/terrified/13.jpg", "thumb": "images/terrified/thumbs/13.jpg", "title": ""}, {"src": "images/terrified/14.jpg", "thumb": "images/terrified/thumbs/14.jpg", "title": ""}, {"src": "images/terrified/15.jpg", "thumb": "images/terrified/thumbs/15.jpg", "title": ""}, {"src": "images/terrified/16.jpg", "thumb": "images/terrified/thumbs/16.jpg", "title": ""}, {"src": "images/terrified/17.jpg", "thumb": "images/terrified/thumbs/17.jpg", "title": ""}, {"src": "images/terrified/18.jpg", "thumb": "images/terrified/thumbs/18.jpg", "title": ""}, {"src": "images/terrified/19.jpg", "thumb": "images/terrified/thumbs/19.jpg", "title": ""}, {"src": "images/terrified/20.jpg", "thumb": "images/terrified/thumbs/20.jpg", "title": ""}, {"src": "images/terrified/21.jpg", "thumb": "images/terrified/thumbs/21.jpg", "title": ""}, {"src": "images/terrified/22.jpg", "thumb": "images/terrified/thumbs/22.jpg", "title": ""}, {"src": "images/terrified/23.jpg", "thumb": "images/terrified/thumbs/23.jpg", "title": ""}, {"src": "images/terrified/24.jpg", "thumb": "images/terrified/thumbs/24.jpg", "title": ""}, {"src": "images/terrified/25.jpg", "thumb": "images/terrified/thumbs/25.jpg", "title": ""}, {"src": "images/terrified/26.jpg", "thumb": "images/terrified/thumbs/26.jpg", "title": ""}, {"src": "images/terrified/27.jpg", "thumb": "images/terrified/thumbs/27.jpg", "title": ""}, {"src": "images/terrified/28.jpg", "thumb": "images/terrified/thumbs/28.jpg", "title": ""}]},{title:"One Foggy Day",date:"February 5, 2023 · 3 p.m.",items:[{"src": "images/one-foggy-day/01.jpg", "thumb": "images/one-foggy-day/thumbs/01.jpg", "title": ""}, {"src": "images/one-foggy-day/02.jpg", "thumb": "images/one-foggy-day/thumbs/02.jpg", "title": ""}, {"src": "images/one-foggy-day/03.jpg", "thumb": "images/one-foggy-day/thumbs/03.jpg", "title": ""}, {"src": "images/one-foggy-day/04.jpg", "thumb": "images/one-foggy-day/thumbs/04.jpg", "title": ""}, {"src": "images/one-foggy-day/05.jpg", "thumb": "images/one-foggy-day/thumbs/05.jpg", "title": ""}, {"src": "images/one-foggy-day/06.jpg", "thumb": "images/one-foggy-day/thumbs/06.jpg", "title": ""}, {"src": "images/one-foggy-day/07.jpg", "thumb": "images/one-foggy-day/thumbs/07.jpg", "title": ""}, {"src": "images/one-foggy-day/08.jpg", "thumb": "images/one-foggy-day/thumbs/08.jpg", "title": ""}, {"src": "images/one-foggy-day/09.jpg", "thumb": "images/one-foggy-day/thumbs/09.jpg", "title": ""}, {"src": "images/one-foggy-day/10.jpg", "thumb": "images/one-foggy-day/thumbs/10.jpg", "title": ""}, {"src": "images/one-foggy-day/11.jpg", "thumb": "images/one-foggy-day/thumbs/11.jpg", "title": ""}, {"src": "images/one-foggy-day/12.jpg", "thumb": "images/one-foggy-day/thumbs/12.jpg", "title": ""}, {"src": "images/one-foggy-day/13.jpg", "thumb": "images/one-foggy-day/thumbs/13.jpg", "title": ""}, {"src": "images/one-foggy-day/14.jpg", "thumb": "images/one-foggy-day/thumbs/14.jpg", "title": ""}, {"src": "images/one-foggy-day/15.jpg", "thumb": "images/one-foggy-day/thumbs/15.jpg", "title": ""}, {"src": "images/one-foggy-day/16.jpg", "thumb": "images/one-foggy-day/thumbs/16.jpg", "title": ""}, {"src": "images/one-foggy-day/17.jpg", "thumb": "images/one-foggy-day/thumbs/17.jpg", "title": ""}, {"src": "images/one-foggy-day/18.jpg", "thumb": "images/one-foggy-day/thumbs/18.jpg", "title": ""}, {"src": "images/one-foggy-day/19.jpg", "thumb": "images/one-foggy-day/thumbs/19.jpg", "title": ""}, {"src": "images/one-foggy-day/20.jpg", "thumb": "images/one-foggy-day/thumbs/20.jpg", "title": ""}, {"src": "images/one-foggy-day/21.jpg", "thumb": "images/one-foggy-day/thumbs/21.jpg", "title": ""}, {"src": "images/one-foggy-day/22.jpg", "thumb": "images/one-foggy-day/thumbs/22.jpg", "title": ""}]}]},
+  printing:{title:"3D Printing",kind:"model",items:[{model:"models/irrie-ting.bin",cover:"images/printing/covers/irrie-ting.png",title:"Irrie Ting",ref:"images/printing/thumbs/irrie-ting.jpg",desc:"Irrie Ting Jamaican Grill"},{model:"models/main-street-train-station.bin",cover:"images/printing/covers/main-street-train-station.png",title:"Main Street Train Station",desc:"Main Street Train Station, Richmond, Virginia",ref:"images/printing/thumbs/main-street-train-station.jpg"},{model:"models/riverview-baptist-church.bin",cover:"images/printing/covers/riverview-baptist-church.png",title:"Riverview Baptist Church",desc:"Riverview Baptist Church, Richmond, Virginia",ref:"images/printing/thumbs/riverview-baptist-church.jpg"},{model:"models/living-single-set.bin",cover:"images/printing/covers/living-single-set.png",title:"Living Single Set",desc:"Living Single set"},{model:"models/ag-office.bin",cover:"images/printing/covers/ag-office.png",title:"AG Office"},{model:"models/patio-restaurant.bin",cover:"images/printing/covers/patio-restaurant.png",title:"Patio Restaurant"},{model:"models/shipping-container.bin",cover:"images/printing/covers/shipping-container.png",title:"Shipping Container"}]},
+  music:{title:"Music",kind:"audio",items:[{src:"audio/mommy.mp3",title:"Mommy",date:"October 7, 2026 · 12 a.m.",desc:"This is a rough draft of a song dedicated to my mommy. I love you, Mommy!"},{src:"audio/highland-park.mp3",title:"Highland Park",date:"September 7, 2026 · 10 p.m."},{src:"audio/nite-and-day.mp3",title:"Nite and Day - Cover",date:"September 9, 2026 · 6:25 p.m."},{src:"audio/something.mp3",title:"Something",date:"September 9, 2026 · 7 p.m."},{src:"audio/something-2.mp3",title:"Something 2",date:"September 15, 2026 · 4:11 p.m."},{src:"audio/another-thing.mp3",title:"Another Thing",date:"September 15, 2026 · 4:15 p.m."},{src:"audio/another-something.mp3",title:"Another Something",date:"September 18, 2026 · 8:30 p.m."},{src:"audio/edgewood-transition.mp3",title:"Edgewood Transition",date:"October 1, 2026 · 12 a.m."}]},
+  film:{title:"Film",kind:"video",items:[]},
+  pencil:{title:"#2 Pencil Drawings",kind:"drawing",items:[{title:"801-899 E Grace St, Richmond, VA, United States",cover:"images/pencil/pencil-1-art.png",art:"images/pencil/pencil-1-art.png",ref:"images/pencil/pencil-1-ref.jpg"},{title:"E Main St, Richmond, VA, United States",cover:"images/pencil/pencil-2-art.png",art:"images/pencil/pencil-2-art.png",ref:"images/pencil/pencil-2-ref.jpg"},{title:"E Franklin St, Richmond, VA, United States",cover:"images/pencil/pencil-3-art.png",art:"images/pencil/pencil-3-art.png",ref:"images/pencil/pencil-3-ref.jpg"},{title:"Drawing 4",cover:"images/pencil/pencil-4-art.png",art:"images/pencil/pencil-4-art.png"},{title:"Drawing 5",cover:"images/pencil/pencil-5-art.png",art:"images/pencil/pencil-5-art.png"},{title:"Drawing 6",cover:"images/pencil/pencil-6-art.png",art:"images/pencil/pencil-6-art.png"},{title:"Drawing 7",cover:"images/pencil/pencil-7-art.png",art:"images/pencil/pencil-7-art.png"},{title:"Drawing 8",cover:"images/pencil/pencil-8-art.png",art:"images/pencil/pencil-8-art.png"},{title:"Drawing 9",cover:"images/pencil/pencil-9-art.png",art:"images/pencil/pencil-9-art.png"},{title:"Drawing 10",cover:"images/pencil/pencil-10-art.png",art:"images/pencil/pencil-10-art.png"},{title:"Drawing 11",cover:"images/pencil/pencil-11-art.png",art:"images/pencil/pencil-11-art.png"},{title:"Drawing 12",cover:"images/pencil/pencil-12-art.png",art:"images/pencil/pencil-12-art.png"}]},
+  vlog:{title:"Dri's Weekly Vlog",kind:"video",items:[]},
+  variety:{title:"Dri's Variety Show",kind:"video",items:[]},
+  writers:{title:"Writer's Board",kind:"writing",items:[{title:"What Is Steven Saying?",body:"Disclosure Day wasn't the first clue. He's been saying something for a while. So, do aliens exist?"}]}
+};
+const cnt=p=>{const s=SECTIONS[p];return s.sets?s.sets.reduce((a,x)=>a+x.items.length,0):s.items.length};
+const PAGES=[["home","Home"],["timeline","Timeline"],["pictures","Pictures"],["printing","3D Printing"],["music","Music"],["film","Film"],["pencil","#2 Pencil Drawings"],["vlog","Dri's Weekly Vlog"],["variety","Dri's Variety Show"],["writers","Writer's Board"]];
+function drawSide(){
+  $("side").innerHTML=PAGES.map(([p,t])=>{
+    let h=`<button data-page="${p}"${p===page?' aria-current="page"':""}>${t}</button>`;
+    if(p==="timeline"&&(page==="timeline"||page==="home")){
+      h+='<div class="cent"><button class="wide" data-today style="--c:#0bda51">Today</button><button class="wide" data-full aria-pressed="'+full+'" style="--c:#0bda51">Full timeline</button>';
+      for(let c=100;c<=2000;c+=100)h+=`<button data-jump="${c}" aria-pressed="${!full&&c==curC}" style="--c:${hue(c)}">${c}s</button>`;
+      h+="</div>";
+    }
+    return h;
+  }).join("");
+}
+function nav(p){page=p;setIdx=null;if(p==="timeline")st={y:null,m:null};render();scrollTo(0,0)}
+function render(){
+  if(window.__v3d)window.__v3d.disposeAll();
+  drawSide();
+  if(page!=="timeline")main.style.setProperty("--c",PAGE_HUE[page]||"#0bda51");
+  if(page==="timeline")return renderTimeline();
+  crumbs.innerHTML="";
+  page==="home"?home():section(page);
+}
+function home(){
+  main.innerHTML='<div class="home">'+PAGES.slice(1).map(([p,t])=>{
+    const n=p==="timeline"?"Every year since 100 A.D.":(cnt(p)?cnt(p)+(cnt(p)>1?" items":" item"):"Coming soon");
+    return `<button class="box${p==="timeline"?" tlb":""}" data-page="${p}" style="--c:${PAGE_HUE[p]}"><b>${t}</b><small>${n}</small></button>`}).join("")+"</div>";
+}
+function card(s,it,i){
+  const t=it.title?`<figcaption><b>${it.title}</b>${it.date?`<small class="dt2">${it.date}</small>`:""}${it.desc?`<p class="ds">${it.desc}</p>`:""}</figcaption>`:"";
+  if(/youtube\.com\/embed|player\.vimeo\.com|open\.spotify\.com\/embed/.test(it.src))return `<figure><iframe src="${it.src}" allowfullscreen loading="lazy" title="${it.title||s.title}"></iframe>${t}</figure>`;
+  if(s.kind==="audio")return `<figure><audio controls src="${it.src}"></audio>${t}</figure>`;
+  if(s.kind==="video")return `<figure><video controls playsinline src="${it.src}"></video>${t}</figure>`;
+  return `<figure><img src="${it.src}" alt="${it.title||s.title}" data-zoom="${i}" loading="lazy">${t}</figure>`;
+}
+async function modelSection(p){
+  const s=SECTIONS[p];
+  if(!s.items.length){main.innerHTML=`<h2 class="c">${s.title}</h2><div class="empty">Nothing here yet.</div>`;return}
+  if(setIdx==null){
+    main.innerHTML=`<h2 class="c">${s.title}</h2><div class="covers multi">`+s.items.map((it,i)=>`<button class="cover mcover" data-set="${i}" aria-label="Open ${it.title}"><img src="${it.cover}" alt="${it.title}" draggable="false"><span class="cap"><b>${it.title}</b><small>3D model &middot; tap to open</small></span></button>`).join("")+"</div>";
+    return;
+  }
+  const it=s.items[setIdx],i=setIdx;
+  main.innerHTML=`<div class="pn"><button data-back>&lsaquo; ${s.title}</button><span></span></div><article class="mdl"><div class="stage" data-i="${i}"><span class="hint">Drag to turn &middot; scroll to zoom</span></div><aside>${it.ref?`<button class="ref" data-ref="${i}" aria-label="View reference photo"><img src="${it.ref}" alt="${it.title} reference" loading="lazy" draggable="false"></button>`:""}<h3>${it.title}${it.date?` <em class="dt">${it.date}</em>`:""}</h3>${it.desc?`<p class="ds">${it.desc}</p>`:""}</aside></article>`;
+  const fail=el=>el.innerHTML='<span class="hint" style="opacity:1">3D view unavailable on this device.</span>';
+  try{
+    const v=window.__v3d||(window.__v3d=await import("./vendor/viewer.js"));
+    if(page!==p||setIdx!==i)return;
+    const el=document.querySelector(".stage"); v.mount(el,it.model).catch(()=>fail(el));
+  }catch(e){document.querySelectorAll(".stage").forEach(fail)}
+}
+function drawingSection(p){
+  const s=SECTIONS[p];
+  if(!s.items.length){main.innerHTML=`<h2 class="c">${s.title}</h2><div class="empty">Nothing here yet.</div>`;return}
+  if(setIdx==null){
+    main.innerHTML=`<h2 class="c">${s.title}</h2><div class="covers multi">`+s.items.map((it,i)=>`<button class="cover mcover dcover" data-set="${i}" aria-label="Open ${it.title}"><img src="${it.cover}" alt="${it.title}" draggable="false"><span class="cap"><b>${it.title}${it.date?` <em class="dt">${it.date}</em>`:""}</b><small>tap to open</small></span></button>`).join("")+"</div>";
+    return;
+  }
+  const it=s.items[setIdx],i=setIdx;
+  main.innerHTML=`<div class="pn"><button data-back>&lsaquo; ${s.title}</button><span></span></div><article class="mdl${it.ref?"":" solo"}"><div class="stage art"><img src="${it.art}" alt="${it.title}" draggable="false"></div><aside>${it.ref?`<button class="ref" data-ref="${i}" aria-label="View reference photo"><img src="${it.ref}" alt="${it.title} on paper" draggable="false"></button>`:""}<h3>${it.title}${it.date?` <em class="dt">${it.date}</em>`:""}</h3>${it.desc?`<p class="ds">${it.desc}</p>`:""}</aside></article>`;
+}
+function writingSection(p){
+  const s=SECTIONS[p];
+  if(!s.items.length){main.innerHTML=`<h2 class="c">${s.title}</h2><div class="empty">Nothing here yet.</div>`;return}
+  const esc=t=>String(t).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+  if(setIdx==null){
+    main.innerHTML=`<h2 class="c">${s.title}</h2><div class="covers multi">`+s.items.map((it,i)=>`<button class="cover wcover" data-set="${i}" aria-label="Open ${esc(it.title)}"><span class="cap"><b>${esc(it.title)}${it.date?` <em class="dt">${it.date}</em>`:""}</b><small>${esc((it.body||"").slice(0,90))}${(it.body||"").length>90?"\u2026":""}</small></span></button>`).join("")+"</div>";
+    return;
+  }
+  const it=s.items[setIdx];
+  main.innerHTML=`<div class="pn"><button data-back>&lsaquo; ${s.title}</button><span></span></div><article class="post"><h2 class="c" style="margin-top:0">${esc(it.title)}</h2>${it.date?`<p class="dt" style="text-align:center">${it.date}</p>`:""}<div class="body">${(it.body||"").split(/\n\s*\n/).map(x=>`<p>${esc(x).replace(/\n/g,"<br>")}</p>`).join("")}</div>
+    <section class="cmts"><h3>Comments${(it.comments||[]).length?` <small>${it.comments.length}</small>`:""}</h3>
+    ${(it.comments||[]).length?`<ul>${it.comments.map(c=>`<li><p>${esc(c.text).replace(/\n/g,"<br>")}</p><small>Anonymous${c.date?` &middot; ${esc(c.date)}`:""}</small></li>`).join("")}</ul>`:'<p class="none">No comments yet. Be the first.</p>'}
+    <form class="cform" name="comments" method="POST"><input type="hidden" name="form-name" value="comments"><input type="hidden" name="post" value="${esc(it.title)}"><p class="hp"><label>Leave empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+    <label for="cmt">Add a comment <small>(anonymous, no name or email needed)</small></label>
+    <textarea id="cmt" name="comment" rows="4" maxlength="1000" required placeholder="Share your thoughts..."></textarea>
+    <div class="crow"><button class="btn" type="submit">Post anonymously</button><span class="cmsg" role="status"></span></div>
+    <p class="cnote">Comments are reviewed before they appear.</p></form></section></article>`;
+  const f=main.querySelector(".cform");
+  f.onsubmit=async e=>{e.preventDefault();const m=f.querySelector(".cmsg"),b=f.querySelector("button");
+    if(!f.comment.value.trim())return;b.disabled=true;m.textContent="Sending...";
+    try{const r=await fetch("/",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:new URLSearchParams(new FormData(f)).toString()});
+      if(!r.ok)throw 0;f.comment.value="";m.textContent="Thank you! Your comment will appear after it is approved."}
+    catch(_){m.textContent="Sorry, that did not send. Please try again."}b.disabled=false};
+}
+function section(p){
+  const s=SECTIONS[p];
+  if(s.sets)return imgSection(p);
+  if(s.kind==="model")return modelSection(p);
+  if(s.kind==="drawing")return drawingSection(p);
+  if(s.kind==="writing")return writingSection(p);
+  if(!s.items.length){main.innerHTML=`<h2 class="c">${s.title}</h2><div class="empty">Nothing here yet.</div>`;return}
+  main.innerHTML=`<h2 class="c">${s.title}</h2><div class="gal">${s.items.map((it,i)=>card(s,it,i)).join("")}</div>`;
+}
+function imgSection(p){
+  const s=SECTIONS[p],sets=s.sets.map((x,i)=>({...x,i})).filter(x=>x.items.length);
+  const th=it=>it.thumb||it.src;
+  if(!sets.length){main.innerHTML=`<h2 class="c">${s.title}</h2><div class="empty">Nothing here yet.</div>`;return}
+  if(setIdx==null){
+    main.innerHTML=`<h2 class="c">${s.title}</h2><div class="covers${sets.length>1?" multi":""}">`+sets.map(x=>{
+      const c=x.items[0],n=x.items.length;
+      return `<button class="cover" data-set="${x.i}" aria-label="Open ${x.title}, ${n} photo${n>1?"s":""}"><img src="${th(c)}" alt="${c.title||x.title}" draggable="false"><span class="cap"><b>${x.title}${x.date?` <em class="dt">${x.date}</em>`:""}</b><small>${n} photo${n>1?"s":""} · tap to open</small></span></button>`}).join("")+"</div>";
+    return;
+  }
+  const x=s.sets[setIdx];
+  main.innerHTML=`<div class="pn"><button data-back>‹ ${s.title}</button><span></span></div><h2 class="c" style="margin-top:0">${x.title}${x.date?` <em class="dt">${x.date}</em>`:""}</h2><div class="album">${x.items.map((it,i)=>`<button class="thumb" data-zoom="${i}" aria-label="${it.title||"Photo "+(i+1)}"><img src="${th(it)}" alt="${it.title||x.title}" loading="lazy" draggable="false"></button>`).join("")}</div>`;
+}
+function lbList(){const s=SECTIONS[page];return (s.kind==="model"||s.kind==="drawing")?s.items.map((x,i)=>({i,src:x.ref,title:x.title})).filter(x=>x.src):s.sets[setIdx].items}
+function showLb(i){
+  const items=lbList();if(!items.length)return;
+  lbIndex=(i+items.length)%items.length;const it=items[lbIndex];
+  $("lbi").src=it.src;$("lbi").alt=it.title||SECTIONS[page].title;
+  $("lbc").textContent=(it.title?it.title+" · ":"")+(lbIndex+1)+" / "+items.length;
+}
+const lbStep=d=>showLb(lbIndex+d);
+$("side").addEventListener("click",e=>{
+  const b=e.target.closest("[data-page]");
+  if(b)nav(b.dataset.page);else onClick(e);
+  if(isMobile()&&e.target.closest("button"))setSide(false);
+});
+const isMobile=()=>matchMedia("(max-width:800px)").matches;
+function setSide(open){
+  document.body.classList.toggle("side-closed",!open);
+  const b=$("menu");b.textContent=open?"\u2715 Close":"\u2630 Menu";b.setAttribute("aria-expanded",open);
+  try{localStorage.setItem("side",open?"1":"0")}catch(_){}
+}
+$("menu").onclick=()=>setSide(document.body.classList.contains("side-closed"));
+main.addEventListener("click",()=>{if(isMobile()&&!document.body.classList.contains("side-closed"))setSide(false)},true);
+{let o=!isMobile();try{const v=localStorage.getItem("side");if(v!==null&&!isMobile())o=v==="1"}catch(_){}setSide(o)}
+$("lbx").onclick=()=>$("lb").close();
+$("lbp").onclick=()=>lbStep(-1);$("lbn").onclick=()=>lbStep(1);
+$("lb").addEventListener("click",e=>{if(e.target===$("lb"))$("lb").close()});
+function fullView(){
+  let h=search()+'<h2 class="c">Full timeline</h2><div class="full">';
+  for(let c=100;c<=2000;c+=100){
+    h+=`<section class="cs"><h3>${c}s</h3><div class="mini">`;
+    for(let i=0;i<100;i++){
+      const y=c+i;if(y>NOW)break;const ev=byYear[y];
+      h+=`<button class="mb${ev?" ev":""}${hasArt(y)?" art":""}" data-y="${y}" title="${y}${ev?" \u00b7 "+ev.join(", "):""}" aria-label="${y}${ev?": "+ev.join(", "):""}">${String(i).padStart(2,"0")}</button>`;
+    }
+    h+="</div></section>";
+  }
+  main.innerHTML=h+"</div>";
+  main.querySelectorAll(".mb").forEach(b=>b.onclick=()=>go(+b.dataset.y,null));
+}
+$("foot").innerHTML="\u00a9 "+new Date().getFullYear()+" The Icosahedron Effect. All rights reserved. Please don't copy or reuse the art without permission.<br>Website built with AI assistance. All artwork is my own.";
+const reduce=matchMedia("(prefers-reduced-motion:reduce)").matches;
+function step(dir){
+  if(page!=="timeline")return;
+  if(st.y==null){if(full)return;const c=curC+dir*100;if(c>=100&&c<=2000){curC=c;render()}}
+  else if(st.m==null){const y=st.y+dir;if(y>=100&&y<=NOW)go(y,null)}
+  else{let y=st.y,m=st.m+dir;if(m<0){m=11;y--}if(m>11){m=0;y++}if(y>=100&&y<=NOW)go(y,m)}
+}
+function stepDay(dir){
+  const d=new Date(2000,cur.m,cur.d);d.setFullYear(cur.y);d.setDate(d.getDate()+dir);
+  const y=d.getFullYear(),m=d.getMonth();if(y<100||y>NOW)return;
+  if(st.m!=null&&(st.y!==y||st.m!==m)){st={y,m};curC=Math.floor(y/100)*100;render()}
+  day(y,m,d.getDate());
+}
+$("pd").onclick=()=>stepDay(-1);$("nd").onclick=()=>stepDay(1);
+document.addEventListener("keydown",e=>{
+  if(e.key!=="ArrowLeft"&&e.key!=="ArrowRight")return;
+  if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)||e.metaKey||e.ctrlKey||e.altKey)return;
+  const dir=e.key==="ArrowLeft"?-1:1;
+  if($("lb").open){lbStep(dir);return}
+  dlg.open?stepDay(dir):step(dir);
+});
+function swipe(el,fn){
+  let x=0,y=0,ok=false;
+  el.addEventListener("touchstart",e=>{ok=!e.target.closest(".jump");x=e.touches[0].clientX;y=e.touches[0].clientY},{passive:true});
+  el.addEventListener("touchend",e=>{
+    if(!ok)return;const t=e.changedTouches[0],dx=t.clientX-x,dy=t.clientY-y;
+    if(Math.abs(dx)>60&&Math.abs(dx)>1.5*Math.abs(dy))fn(dx>0?-1:1);
+  },{passive:true});
+}
+swipe(main,step);swipe(dlg,stepDay);swipe($("lb"),lbStep);
+const topBtn=$("top");
+addEventListener("scroll",()=>{topBtn.hidden=scrollY<600},{passive:true});
+topBtn.onclick=()=>scrollTo({top:0,behavior:reduce?"auto":"smooth"});
+render();
+</script>
+</body>
+</html>
