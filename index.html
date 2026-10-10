@@ -426,11 +426,21 @@ function writingSection(p){
     <textarea id="cmt" name="comment" rows="4" maxlength="1000" required placeholder="Share your thoughts..."></textarea>
     <div class="crow"><button class="btn" type="submit">Post anonymously</button><span class="cmsg" role="status"></span></div>
     <p class="cnote">Comments are reviewed before they appear.</p></form></section></article>`;
-  const f=main.querySelector(".cform");
+  const f=main.querySelector(".cform"),box=main.querySelector(".cmts");
+  const draw=extra=>{const all=(it.comments||[]).concat(extra||[]);
+    box.querySelector("h3").innerHTML="Comments"+(all.length?` <small>${all.length}</small>`:"");
+    let ul=box.querySelector("ul"),none=box.querySelector(".none");
+    if(!all.length)return;
+    if(none)none.remove();
+    if(!ul){ul=document.createElement("ul");box.querySelector("h3").after(ul)}
+    ul.innerHTML=all.map(c=>`<li><p>${esc(c.text).replace(/\n/g,"<br>")}</p><small>Anonymous${c.date?` &middot; ${esc(String(c.date).slice(0,10))}`:""}</small></li>`).join("")};
+  fetch("/api/comments?post="+encodeURIComponent(it.title)).then(r=>r.ok?r.json():[]).then(l=>{if(Array.isArray(l)&&l.length&&box.isConnected)draw(l)}).catch(()=>{});
   f.onsubmit=async e=>{e.preventDefault();const m=f.querySelector(".cmsg"),b=f.querySelector("button");
     if(!f.comment.value.trim())return;b.disabled=true;m.textContent="Sending...";
-    try{const r=await fetch("/",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:new URLSearchParams(new FormData(f)).toString()});
-      if(!r.ok)throw 0;f.comment.value="";m.textContent="Thank you! Your comment will appear after it is approved."}
+    try{const r=await fetch("/api/comments",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({post:it.title,text:f.comment.value,hp:f["bot-field"].value})});
+      if(!r.ok)throw 0;
+      fetch("/",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:new URLSearchParams(new FormData(f)).toString()}).catch(()=>{});
+      f.comment.value="";m.textContent="Thank you! Your comment will appear after it is approved."}
     catch(_){m.textContent="Sorry, that did not send. Please try again."}b.disabled=false};
 }
 function section(p){
