@@ -7,3 +7,5 @@ Updated by Dri with Claude.
 All artwork is the artist's own. All rights reserved.
 
 Forms enabled.
+
+Password set.
