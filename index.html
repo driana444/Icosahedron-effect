@@ -176,8 +176,8 @@ h2,h3,.box b{font-weight:700;letter-spacing:-.01em}
 .gal img{border-radius:14px 14px 0 0}
 .slot{border:0;background:color-mix(in srgb,#0bda51 10%,var(--bg))}
 .models{display:grid;gap:28px}
-.mdl{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:18px;align-items:center}
-.stage{position:relative;height:min(62vh,520px);min-height:340px;cursor:grab;touch-action:none}
+.mdl{display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:14px;align-items:center}
+.stage{position:relative;height:min(78vh,720px);min-height:380px;cursor:grab;touch-action:none}
 .stage:active{cursor:grabbing}.stage canvas{display:block;outline:0}
 .stage .hint{position:absolute;left:0;right:0;bottom:6px;text-align:center;font-size:.9rem;opacity:.65;pointer-events:none}
 .mdl aside{display:flex;flex-direction:column;gap:10px}
@@ -392,7 +392,7 @@ async function modelSection(p){
     return;
   }
   const it=s.items[setIdx],i=setIdx;
-  main.innerHTML=`<div class="pn"><button data-back>&lsaquo; ${s.title}</button><span></span></div><article class="mdl"><div class="stage" data-i="${i}"><span class="hint">Drag to turn &middot; scroll to zoom</span></div><aside>${it.ref?`<button class="ref" data-ref="${i}" aria-label="View reference photo"><img src="${it.ref}" alt="${it.title} reference" loading="lazy" draggable="false"></button>`:""}<h3>${it.title}${it.date?` <em class="dt">${it.date}</em>`:""}</h3>${it.desc?`<p class="ds">${it.desc}</p>`:""}</aside></article>`;
+  main.innerHTML=`<div class="pn"><button data-back>&lsaquo; ${s.title}</button><span></span></div><article class="mdl"><div class="stage" data-i="${i}"><span class="hint">Drag to turn &middot; scroll or pinch to zoom &middot; right-drag to move</span></div><aside>${it.ref?`<button class="ref" data-ref="${i}" aria-label="View reference photo"><img src="${it.ref}" alt="${it.title} reference" loading="lazy" draggable="false"></button>`:""}<h3>${it.title}${it.date?` <em class="dt">${it.date}</em>`:""}</h3>${it.desc?`<p class="ds">${it.desc}</p>`:""}</aside></article>`;
   const fail=el=>el.innerHTML='<span class="hint" style="opacity:1">3D view unavailable on this device.</span>';
   try{
     const v=window.__v3d||(window.__v3d=await import("./vendor/viewer.js"));

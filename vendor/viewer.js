@@ -7,7 +7,7 @@ export async function mount(el,url){
   r.setPixelRatio(Math.min(devicePixelRatio||1,2)); r.setClearColor(0,0);
   el.prepend(r.domElement);
   const scene=new T.Scene(),cam=new T.PerspectiveCamera(35,1,.1,50);
-  cam.position.set(0,.15,4.6);
+  cam.position.set(0,.12,3.3);
   scene.add(new T.HemisphereLight(0xffffff,0x1d6b45,1.15));
   const k=new T.DirectionalLight(0xffffff,2.2);k.position.set(3,4,5);scene.add(k);
   const f=new T.DirectionalLight(0x9dffc4,.9);f.position.set(-4,-1,-3);scene.add(f);
@@ -19,7 +19,7 @@ export async function mount(el,url){
   const mesh=new T.Mesh(g,new T.MeshStandardMaterial({color:0xf6f8f4,roughness:.55,metalness:.05}));
   const grp=new T.Group();grp.add(mesh);scene.add(grp);
   const ctl=new OrbitControls(cam,r.domElement);
-  ctl.enableDamping=true;ctl.dampingFactor=.08;ctl.enablePan=false;ctl.minDistance=2.4;ctl.maxDistance=8;ctl.rotateSpeed=.9;
+  ctl.enableDamping=true;ctl.dampingFactor=.08;ctl.enablePan=true;ctl.screenSpacePanning=true;ctl.zoomSpeed=1.2;ctl.minDistance=.9;ctl.maxDistance=7;ctl.rotateSpeed=.9;
   ctl.autoRotate=true;ctl.autoRotateSpeed=1.4;
   let idle;ctl.addEventListener("start",()=>{ctl.autoRotate=false;clearTimeout(idle)});
   ctl.addEventListener("end",()=>{idle=setTimeout(()=>ctl.autoRotate=true,3500)});
