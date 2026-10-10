@@ -18,8 +18,9 @@ export async function mount(el,url){
   g.setAttribute("position",new T.BufferAttribute(pos,3)); g.setIndex(new T.BufferAttribute(idx,1)); g.computeVertexNormals();
   const mesh=new T.Mesh(g,new T.MeshStandardMaterial({color:0xf6f8f4,roughness:.55,metalness:.05}));
   const grp=new T.Group();grp.add(mesh);scene.add(grp);
+  g.computeBoundingSphere();const rad=g.boundingSphere.radius,fit=Math.max(1.6,rad*1.08/Math.sin(T.MathUtils.degToRad(17.5)));cam.position.set(0,fit*.04,fit);
   const ctl=new OrbitControls(cam,r.domElement);
-  ctl.enableDamping=true;ctl.dampingFactor=.08;ctl.enablePan=true;ctl.screenSpacePanning=true;ctl.zoomSpeed=1.2;ctl.minDistance=.9;ctl.maxDistance=7;ctl.rotateSpeed=.9;
+  ctl.enableDamping=true;ctl.dampingFactor=.08;ctl.enablePan=true;ctl.screenSpacePanning=true;ctl.zoomSpeed=1.2;ctl.minDistance=fit*.3;ctl.maxDistance=fit*2.2;ctl.rotateSpeed=.9;
   ctl.autoRotate=true;ctl.autoRotateSpeed=1.4;
   let idle;ctl.addEventListener("start",()=>{ctl.autoRotate=false;clearTimeout(idle)});
   ctl.addEventListener("end",()=>{idle=setTimeout(()=>ctl.autoRotate=true,3500)});
