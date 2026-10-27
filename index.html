@@ -373,7 +373,7 @@ function render(){
   page==="home"?home():section(page);
 }
 function home(){
-  main.innerHTML='<div class="home">'+PAGES.slice(1).map(([p,t])=>{
+  main.innerHTML='<div class="home">'+PAGES.slice(1).map((x,i)=>({x,i,e:x[0]!=="timeline"&&!cnt(x[0])?1:0})).sort((a,b)=>a.e-b.e||a.i-b.i).map(({x:[p,t]})=>{
     const n=p==="timeline"?"Every year since 100 A.D.":(cnt(p)?cnt(p)+(cnt(p)>1?" items":" item"):"Coming soon");
     return `<button class="box${p==="timeline"?" tlb":""}" data-page="${p}" style="--c:${PAGE_HUE[p]}"><b>${t}</b><small>${n}</small></button>`}).join("")+"</div>";
 }
