@@ -253,7 +253,7 @@ const ART={};
 const NOW=2026,MN=["January","February","March","April","May","June","July","August","September","October","November","December"],WD=["S","M","T","W","T","F","S"];
 const byYear={};EVENTS.forEach(([n,y])=>(byYear[y]=byYear[y]||[]).push(n));
 const $=id=>document.getElementById(id),main=$("main"),crumbs=$("crumbs"),dlg=$("dlg");
-let st={y:null,m:null},cur=null,curC=2000,tlScroll=0,page="home",full=false,fullC=null,setIdx=null,lbIndex=0;
+let st={y:null,m:null},cur=null,curC=2000,tlScroll=0,page="home",full=true,fullC=null,setIdx=null,lbIndex=0;
 const key=(y,m,d)=>`${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
 const hasArt=(y,m)=>Object.keys(ART).some(k=>k.startsWith(m==null?y+"-":y+"-"+String(m+1).padStart(2,"0")));
 function featured(){
@@ -274,10 +274,10 @@ function onClick(e){
   if(t.dataset.ref!==undefined){const L=lbList();const k=L.findIndex(x=>x.i===+t.dataset.ref);showLb(Math.max(k,0));if(!$("lb").open)$("lb").showModal();return}
   if(t.dataset.zoom!==undefined){showLb(+t.dataset.zoom);if(!$("lb").open)$("lb").showModal();return}
   if(t.dataset.jump){page="timeline";curC=+t.dataset.jump;full=false;fullC=null;st={y:null,m:null};render();scrollTo(0,0)}
-  else if(t.dataset.fullc){fullC=+t.dataset.fullc;render();scrollTo(0,0)}
+  else if(t.dataset.fullc){page="timeline";st={y:null,m:null};fullC=+t.dataset.fullc;render();scrollTo(0,0)}
   else if("fullback" in t.dataset){fullC=null;render();scrollTo(0,0)}
   else if("full" in t.dataset){const was=page==="timeline"&&full;page="timeline";full=!was;fullC=null;st={y:null,m:null};render();scrollTo(0,0)}
-  else if("today" in t.dataset){page="timeline";full=false;const n=new Date();go(Math.min(n.getFullYear(),NOW),n.getMonth())}
+  else if("today" in t.dataset){page="timeline";const n=new Date();go(Math.min(n.getFullYear(),NOW),n.getMonth())}
   else if(t.dataset.art){const [y,m,d]=t.dataset.art.split("-").map(Number);day(y,m-1,d)}
   else{const [y,m]=t.dataset.nav.split("|");go(+y,m===""?null:+m)}
 }
@@ -300,7 +300,7 @@ function renderTimeline(){
   crumbs.innerHTML="";
   const add=(t,f)=>{const b=document.createElement("button");b.textContent=t;b.onclick=f;crumbs.append(b)};
   add("Home",()=>nav("home"));
-  add("Timeline",()=>go(null,null));
+  add("Full timeline",()=>go(null,null));
   if(y!=null)add(y,()=>go(y,null));
   if(m!=null)add(MN[m],()=>go(y,m));
   if(y==null)return timeline();
@@ -368,19 +368,19 @@ const SECTIONS={
   writers:{title:"Writer's Board",kind:"writing",items:[{title:"What Is Steven Saying?",body:"Disclosure Day wasn't the first clue. He's been saying something for a while. So, do aliens exist?"}]}
 };
 const cnt=p=>{const s=SECTIONS[p];return s.sets?s.sets.reduce((a,x)=>a+x.items.length,0):s.items.length};
-const PAGES=[["home","Home"],["timeline","Timeline"],["pictures","Pictures"],["printing","3D Printing"],["music","Music"],["film","Film"],["pencil","#2 Pencil Drawings"],["vlog","Dri"],["variety","Variety Show"],["writers","Writer's Board"]];
+const PAGES=[["home","Home"],["timeline","Full timeline"],["pictures","Pictures"],["printing","3D Printing"],["music","Music"],["film","Film"],["pencil","#2 Pencil Drawings"],["vlog","Dri"],["variety","Variety Show"],["writers","Writer's Board"]];
 function drawSide(){
   $("side").innerHTML=PAGES.map(([p,t])=>{
     let h=`<button data-page="${p}"${p===page?' aria-current="page"':""}>${t}</button>`;
     if(p==="timeline"&&(page==="timeline"||page==="home")){
-      h+='<div class="cent"><button class="wide" data-today style="--c:#0bda51">Today</button><button class="wide" data-full aria-pressed="'+full+'" style="--c:#0bda51">Full timeline</button>';
-      for(let c=100;c<=2000;c+=100)h+=`<button data-jump="${c}" aria-pressed="${!full&&c==curC}" style="--c:${hue(c)}">${c}s</button>`;
+      h+='<div class="cent"><button class="wide" data-today style="--c:#0bda51">Today</button>';
+      for(let c=100;c<=2000;c+=100)h+=`<button data-fullc="${c}" aria-pressed="${fullC==c&&st.y==null}" style="--c:${hue(c)}">${c}s</button>`;
       h+="</div>";
     }
     return h;
   }).join("");
 }
-function nav(p){page=p;setIdx=null;if(p==="timeline")st={y:null,m:null};render();scrollTo(0,0)}
+function nav(p){page=p;setIdx=null;if(p==="timeline"){st={y:null,m:null};fullC=null}render();scrollTo(0,0)}
 function render(){
   if(window.__v3d)window.__v3d.disposeAll();
   drawSide();
