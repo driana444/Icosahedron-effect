@@ -2,7 +2,7 @@ import * as T from './three.module.min.js';
 import {OrbitControls} from './OrbitControls.js';
 const live=[];
 export function disposeAll(){while(live.length)live.pop()()}
-export async function mount(el,url){
+export async function mount(el,url,opts={}){
   const r=new T.WebGLRenderer({antialias:true,alpha:true});
   r.setPixelRatio(Math.min(devicePixelRatio||1,2)); r.setClearColor(0,0);
   el.prepend(r.domElement);
@@ -14,8 +14,10 @@ export async function mount(el,url){
   const buf=await (await fetch(url)).arrayBuffer();
   const [nv,nf]=new Uint32Array(buf,0,2);
   const pos=new Float32Array(buf,8,nv*3), idx=new Uint32Array(buf,8+nv*12,nf*3);
-  const g=new T.BufferGeometry();
-  g.setAttribute("position",new T.BufferAttribute(pos,3)); g.setIndex(new T.BufferAttribute(idx,1)); g.computeVertexNormals();
+  let g=new T.BufferGeometry();
+  g.setAttribute("position",new T.BufferAttribute(pos,3)); g.setIndex(new T.BufferAttribute(idx,1));
+  if(opts.flat){const ni=g.toNonIndexed();g.dispose();g=ni}
+  g.computeVertexNormals();
   const mesh=new T.Mesh(g,new T.MeshStandardMaterial({color:0xf6f8f4,roughness:.55,metalness:.05}));
   const grp=new T.Group();grp.add(mesh);scene.add(grp);
   g.computeBoundingSphere();const rad=g.boundingSphere.radius,fit=Math.max(1.6,rad*1.08/Math.sin(T.MathUtils.degToRad(17.5)));cam.position.set(0,fit*.04,fit);
