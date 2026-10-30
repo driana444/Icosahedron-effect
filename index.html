@@ -103,6 +103,8 @@ h1,h2,h3,.yb,.m,.d,.jump button,#crumbs button,.pn button,.find label,.find inpu
 .tl.evgrid .yb{aspect-ratio:auto;min-height:56px;padding:8px 6px;background:transparent;border-radius:12px;box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--c) 38%,transparent);color:var(--ink);font-size:.8rem}
 .tl.evgrid .yb b{color:var(--c);font-size:1.1rem;font-weight:800}
 .tl.evgrid .yb small{color:var(--ink);opacity:.8;font-size:.72rem}
+.tl.evgrid .yb:not(.ev){box-shadow:none;background:color-mix(in srgb,var(--c) 8%,transparent)}
+.tl.evgrid .yb:not(.ev) b{color:var(--ink);opacity:.6;font-weight:600}
 .tl.evgrid .yb:hover{background:color-mix(in srgb,var(--c) 16%,transparent);filter:none}
 .full{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px}
 .full h3{margin:0 0 4px;text-align:center;color:var(--green)}
@@ -515,12 +517,11 @@ function fullView(){
     return;
   }
   const c=fullC,ys=[];
-  for(let i=0;i<100;i++){const y=c+i;if(y>NOW)break;if(byYear[y]||hasArt(y))ys.push(y)}
+  for(let i=0;i<100;i++){const y=c+i;if(y>NOW)break;ys.push(y)}
   let h=search()+`<div class="pn"><button data-fullback>\u2039 Full timeline</button><span></span></div><h2 class="c" style="margin-top:0">${c}'s</h2>`;
   if(ys.length){
     h+='<div class="tl evgrid">'+ys.map(y=>{const ev=byYear[y];return `<button class="yb ev${hasArt(y)?" art":""}" data-y="${y}" aria-label="${y}${ev?": "+ev.join(", "):""}"><b>${y}</b>${ev?`<small>${ev.join(", ")}</small>`:""}</button>`}).join("")+"</div>";
   }else h+=`<div class="empty">Nothing listed in the ${c}s yet.</div>`;
-  h+=`<div class="pn" style="justify-content:center;margin-top:18px"><button data-jump="${c}">Show all years in the ${c}s</button></div>`;
   main.innerHTML=h;
   main.style.setProperty("--c",hue(c));
   main.querySelectorAll(".yb").forEach(b=>b.onclick=()=>go(+b.dataset.y,null));
