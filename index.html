@@ -82,7 +82,8 @@ h1,h2,h3,.yb,.m,.d,.jump button,#crumbs button,.pn button,.find label,.find inpu
 #side button{font:inherit;font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;text-align:left;border:2px solid transparent;background:none;color:var(--ink);padding:10px 12px;border-radius:8px;cursor:pointer;min-height:44px}
 #side button:hover{border-color:var(--green)}
 #side button[aria-current="page"]{background:var(--forest);color:#eaf7ee}
-.home{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-top:10px}
+.home{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:10px}
+@media(max-width:560px){.home{gap:8px}.box{padding:8px}.box b{font-size:.95rem}.box small{font-size:.7rem}}
 .box{aspect-ratio:1;border:3px solid var(--forest);color:var(--ink);font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;cursor:pointer;padding:14px;display:flex;flex-direction:column;justify-content:flex-end;gap:4px;text-align:left;background-color:var(--cell);background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:100% calc(100%/14),calc(100%/14) 100%}
 .box b{font-size:clamp(1.1rem,3vw,1.5rem);background:var(--cell);align-self:flex-start;padding:0 4px}
 .box small{font:.85rem system-ui,sans-serif;background:var(--cell);align-self:flex-start;padding:0 4px;color:var(--green)}
