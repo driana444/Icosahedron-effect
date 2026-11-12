@@ -341,7 +341,7 @@ function featured(){
 }
 function jump(){
   let h='<nav class="jump" aria-label="Jump to century"><button data-today>Today</button><button data-full aria-pressed="'+full+'">Full timeline</button>';
-  for(let c=100;c<=2000;c+=100)h+=`<button data-jump="${c}" aria-pressed="${!full&&c==curC}">${c}s</button>`;
+  for(let c=2000;c>=100;c-=100)h+=`<button data-jump="${c}" aria-pressed="${!full&&c==curC}">${c}s</button>`;
   return h+"</nav>";
 }
 function pn(a,b){return `<div class="pn">${a?`<button data-nav="${a[0]}|${a[1]}">\u2039 ${a[2]}</button>`:"<span></span>"}${b?`<button data-nav="${b[0]}|${b[1]}">${b[2]} \u203A</button>`:"<span></span>"}</div>`}
@@ -456,7 +456,7 @@ function drawSide(){
     let h=`<button data-page="${p}"${p===page?' aria-current="page"':""}>${t}</button>`;
     if(p==="timeline"&&(page==="timeline"||page==="home")){
       h+='<div class="cent"><button class="wide" data-today style="--c:#0bda51">Today</button>';
-      for(let c=100;c<=2000;c+=100)h+=`<button data-fullc="${c}" aria-pressed="${fullC==c&&st.y==null}" style="--c:${hue(c)}">${c}s</button>`;
+      for(let c=2000;c>=100;c-=100)h+=`<button data-fullc="${c}" aria-pressed="${fullC==c&&st.y==null}" style="--c:${hue(c)}">${c}s</button>`;
       h+="</div>";
     }
     return h;
@@ -606,7 +606,7 @@ $("lb").addEventListener("click",e=>{if(e.target===$("lb"))$("lb").close()});
 function fullView(){
   if(fullC==null){
     let h=search()+'<h2 class="c">Full timeline</h2><div class="cpick">';
-    for(let c=100;c<=2000;c+=100)h+=`<button data-fullc="${c}" style="--c:${hue(c)}" aria-label="${c}s">${c}s</button>`;
+    for(let c=2000;c>=100;c-=100)h+=`<button data-fullc="${c}" style="--c:${hue(c)}" aria-label="${c}s">${c}s</button>`;
     main.innerHTML=h+"</div>";
     return;
   }
@@ -614,7 +614,7 @@ function fullView(){
   for(let i=0;i<100;i++){const y=c+i;if(y>NOW)break;ys.push(y)}
   let h=search()+`<div class="pn"><button data-fullback>\u2039 Full timeline</button><span></span></div><h2 class="c" style="margin-top:0">${c}'s</h2>`;
   if(ys.length){
-    for(let d=0;d<100;d+=10){const g=ys.filter(y=>y>=c+d&&y<c+d+10);if(!g.length)continue;
+    for(let d=90;d>=0;d-=10){const g=ys.filter(y=>y>=c+d&&y<c+d+10).reverse();if(!g.length)continue;
       h+=`<div class="dgrp"><h3>${c+d}s</h3><div class="tl evgrid">`+g.map(y=>{const ev=byYear[y];return `<button class="yb${ev?" ev":""}${hasArt(y)?" art":""}" data-y="${y}" aria-label="${y}${ev?": "+ev.join(", "):""}"><b>${y}</b>${ev?`<small>${ev.join(", ")}</small>`:""}</button>`}).join("")+"</div></div>"}
   }else h+=`<div class="empty">Nothing listed in the ${c}s yet.</div>`;
   main.innerHTML=h;
