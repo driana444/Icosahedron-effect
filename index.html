@@ -89,8 +89,8 @@ h1,h2,h3,.yb,.m,.d,.jump button,#crumbs button,.pn button,.find label,.find inpu
 .box small{font:.85rem system-ui,sans-serif;background:var(--cell);align-self:flex-start;padding:0 4px;color:var(--green)}
 .box:hover{outline:3px solid var(--art)}
 .vref{width:100%;height:auto!important;aspect-ratio:auto!important;object-fit:contain!important;border-radius:14px;margin-top:12px;display:block}
-.artsq{width:170px;height:170px;margin:0 auto 18px;border-radius:18px;overflow:hidden;background:#000;pointer-events:none;user-select:none}
-.artsq video{width:100%;height:100%;object-fit:cover;display:block}
+.artsq{width:110px;height:110px;margin:28px auto 6px;pointer-events:none;user-select:none}
+.artsq video{width:100%;height:100%;object-fit:cover;display:block;mix-blend-mode:screen}
 .vcovers{grid-template-columns:repeat(auto-fill,minmax(150px,200px));justify-content:center}
 .mdl.vid{grid-template-columns:minmax(0,1fr) 150px;max-width:640px;margin:0 auto}
 .vstage{border-radius:16px;overflow:hidden;background:#000;height:auto!important;min-height:0!important;aspect-ratio:auto!important}
@@ -490,7 +490,7 @@ function section(p){
   if(s.kind==="video")return videoSection(p);
   if(!s.items.length){main.innerHTML=`<h2 class="c">${s.title}</h2><div class="empty">Nothing here yet.</div>`;return}
   const art=s.art?`<div class="artsq" role="img" aria-label="${s.art.label}"><video src="${s.art.video}" poster="${s.art.poster}" autoplay muted loop playsinline preload="metadata" tabindex="-1" aria-hidden="true"></video></div>`:"";
-  main.innerHTML=`<h2 class="c">${s.title}</h2>${art}<div class="gal">${s.items.map((it,i)=>card(s,it,i)).join("")}</div>`;
+  main.innerHTML=`<h2 class="c">${s.title}</h2><div class="gal">${s.items.map((it,i)=>card(s,it,i)).join("")}</div>${art}`;
 }
 function imgSection(p){
   const s=SECTIONS[p],sets=s.sets.map((x,i)=>({...x,i})).filter(x=>x.items.length);
