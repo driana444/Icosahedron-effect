@@ -271,6 +271,12 @@ h2,h3,.box b{font-weight:700;letter-spacing:-.01em}
 .hc .tag{display:inline-block;background:#2c6244;color:#eaf7d5;border-radius:999px;padding:2px 10px;font-size:.75rem;font-weight:700}
 .dgrid .d.hday,.big .dgrid button.hday{background:#2c6244!important;color:#fff!important;font-weight:800}
 #hcards .hc{margin:10px 0}
+.hc summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;font-size:1.2rem;font-weight:700;color:#fff;padding:6px 0}
+.hc summary::-webkit-details-marker{display:none}
+.hc .arr{display:inline-block;transition:transform .2s;color:#b7d99a}
+.hc[open] .arr{transform:rotate(90deg)}
+.hc .hb{padding:2px 0 8px 26px}
+.hist{gap:6px!important}
 </style>
 </head>
 <body>
@@ -322,7 +328,7 @@ const HISTORY=[
 {y:2022,date:"May 14, 2022",tag:"Event",n:"Buffalo",m:4,d:14,title:"Buffalo supermarket shooting",people:["Payton Gendron"],place:"Buffalo, New York",text:"A racially motivated mass shooting that killed 10 Black shoppers and workers."}
 ];
 const hE=t=>String(t).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
-const hcard=e=>`<article class="hc"><span class="tag">${hE(e.tag)}</span><h3>${hE(e.title)}</h3><p class="meta">${hE(e.date)}${e.place?" \u00b7 "+hE(e.place):""}</p>${e.people&&e.people.length?`<p class="who">${hE(e.people.join(", "))}</p>`:""}<p>${hE(e.text)}</p></article>`;
+const hcard=e=>`<details class="hc"><summary><span class="arr" aria-hidden="true">\u25b8</span><span class="ttl">${hE(e.title)}</span></summary><div class="hb"><span class="tag">${hE(e.tag)}</span><p class="meta">${hE(e.date)}${e.place?" \u00b7 "+hE(e.place):""}</p>${e.people&&e.people.length?`<p class="who">${hE(e.people.join(", "))}</p>`:""}<p>${hE(e.text)}</p></div></details>`;
 const hDay=(y,m,d)=>HISTORY.filter(e=>e.y===y&&e.m===m&&e.d===d);
 const byYear={};EVENTS.forEach(([n,y])=>(byYear[y]=byYear[y]||[]).push(n));HISTORY.forEach(e=>(byYear[e.y]=byYear[e.y]||[]).push(e.n));
 const $=id=>document.getElementById(id),main=$("main"),crumbs=$("crumbs"),dlg=$("dlg");
