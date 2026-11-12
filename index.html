@@ -261,6 +261,14 @@ h2,h3,.box b{font-weight:700;letter-spacing:-.01em}
 .tl.evgrid .yb{display:flex!important;flex-direction:column!important;align-items:center;justify-content:center;text-align:center;aspect-ratio:1/1!important;min-height:0;padding:4px;border-radius:12px;overflow:hidden}
 .tl.evgrid .yb b{min-width:0;font-size:1.05rem}
 .tl.evgrid .yb small{font-size:.62rem;line-height:1.1;margin-top:3px;max-width:100%;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+/* research cards */
+.hist{display:grid;gap:12px;max-width:640px;margin:0 0 22px}
+.hc{background:#1e4630;color:#eaf7d5;border-radius:18px;padding:16px 18px}
+.hc h3{margin:6px 0 2px;font-size:1.2rem;color:#fff}
+.hc p{margin:6px 0 0;line-height:1.5}
+.hc .meta{color:#b7d99a;font-size:.9rem}
+.hc .who{font-weight:700}
+.hc .tag{display:inline-block;background:#2c6244;color:#eaf7d5;border-radius:999px;padding:2px 10px;font-size:.75rem;font-weight:700}
 </style>
 </head>
 <body>
@@ -285,7 +293,32 @@ const EVENTS=[["Trans-Atlantic Slave Trade",1526],["Independence Day",1776],["Wa
 // Add art: ART["1776-07-04"]={src:"images/file.jpg",title:"Name"}
 const ART={};
 const NOW=2026,MN=["January","February","March","April","May","June","July","August","September","October","November","December"],WD=["S","M","T","W","T","F","S"];
-const byYear={};EVENTS.forEach(([n,y])=>(byYear[y]=byYear[y]||[]).push(n));
+// Research entries. Fields: y (year), date, tag (Person|Group|Event), n (short name for the year square), title, people[], place, text
+const HISTORY=[
+{y:1856,date:"May 24\u201325, 1856",tag:"Event",n:"Pottawatomie",title:"Pottawatomie massacre",people:["John Brown"],place:"Franklin County, Kansas",text:"John Brown led violent abolitionist raids in Kansas, including the Pottawatomie massacre."},
+{y:1859,date:"October 16\u201318, 1859",tag:"Event",n:"Harpers Ferry",title:"Raid on Harpers Ferry",people:["John Brown"],place:"Harpers Ferry, Virginia",text:"John Brown led a raid on the federal armory at Harpers Ferry, Virginia."},
+{y:1865,date:"December 1865",tag:"Group",n:"Ku Klux Klan",title:"Ku Klux Klan formed",people:[],place:"Pulaski, Tennessee",text:"Formed during Reconstruction and revived in later eras. Members carried out widespread bombings, lynchings and intimidation campaigns targeting Black Americans, civil rights workers and religious minorities."},
+{y:1919,date:"1919",tag:"Group",n:"Galleanists",title:"Galleanist mail bombs",people:["Luigi Galleani"],place:"U.S. cities",text:"An anarchist network responsible for a series of mail bombings and explosions across U.S. cities in 1919."},
+{y:1920,date:"September 16, 1920",tag:"Event",n:"Wall St. bombing",title:"Wall Street bombing",people:["Luigi Galleani (suspected followers)"],place:"Wall Street, New York City",text:"An explosion that killed 38 people. It has been linked to the Galleanists, but no one was ever convicted."},
+{y:1969,date:"Late 1960s\u20131970s",tag:"Group",n:"Weather Underground",title:"Weather Underground",people:[],place:"United States",text:"A radical left-wing militant organization that carried out a campaign of bombings against government buildings, banks and police stations to protest the Vietnam War."},
+{y:1970,date:"1970s\u2013early 1980s",tag:"Group",n:"Black Liberation Army",title:"Black Liberation Army (BLA)",people:[],place:"United States",text:"An underground militant group involved in assassinations of police officers, bombings, airline hijackings and armored car robberies."},
+{y:1974,date:"1974\u20131983",tag:"Group",n:"FALN",title:"Armed Forces of National Liberation (FALN)",people:[],place:"United States",text:"A Puerto Rican nationalist militant group responsible for over 100 bombings in the United States between 1974 and 1983."},
+{y:1975,date:"January 24, 1975",tag:"Event",n:"Fraunces Tavern",title:"Fraunces Tavern bombing",people:[],place:"New York City",text:"A deadly FALN bombing."},
+{y:1978,date:"1978\u20131995",tag:"Person",n:"Unabomber",title:"Ted Kaczynski (The Unabomber)",people:["Ted Kaczynski"],place:"Nationwide",text:"Conducted a mail-bombing campaign against universities, airlines and technology figures, killing three people and injuring 23."},
+{y:1983,date:"1983\u20131984",tag:"Group",n:"The Order",title:"The Order (Br\u00fcder Schweigen)",people:["Alan Berg"],place:"Pacific Northwest",text:"A white supremacist terrorist group that committed armored car robberies, counterfeiting, and the assassination of radio host Alan Berg (June 1984)."},
+{y:1985,date:"1980s",tag:"Group",n:"CSA compound",title:"The Covenant, the Sword, and the Arm of the Lord (CSA)",people:[],place:"Arkansas",text:"A white supremacist and anti-government survivalist compound that stockpiled weapons and explosives for planned attacks on federal infrastructure."},
+{y:1995,date:"April 19, 1995",tag:"Event",n:"Oklahoma City",title:"Oklahoma City bombing",people:["Timothy McVeigh","Terry Nichols"],place:"Alfred P. Murrah Federal Building, Oklahoma City",text:"Killed 168 people, the deadliest act of domestic terrorism in U.S. history."},
+{y:1996,date:"1996\u20131998",tag:"Person",n:"Eric Rudolph",title:"Eric Rudolph bombings",people:["Eric Rudolph"],place:"Atlanta, Georgia and other sites",text:"A series of anti-abortion and anti-government bombings, including the 1996 Centennial Olympic Park bombing in Atlanta."},
+{y:1998,date:"Late 1990s\u2013early 2000s",tag:"Group",n:"ELF / ALF",title:"Earth Liberation Front and Animal Liberation Front",people:[],place:"Ski resorts, logging companies, research labs",text:"Decentralized eco-terrorist and animal rights networks responsible for millions of dollars in property damage through arson and sabotage."},
+{y:2001,date:"Fall 2001",tag:"Event",n:"Anthrax attacks",title:"2001 anthrax attacks",people:["Bruce Ivins"],place:"Letters mailed to media outlets and U.S. Senators",text:"Letters laced with anthrax spores killed five people. The FBI concluded Bruce Ivins was the sole perpetrator."},
+{y:2012,date:"August 5, 2012",tag:"Event",n:"Oak Creek",title:"Sikh temple shooting",people:["Wade Michael Page"],place:"Oak Creek, Wisconsin",text:"A white supremacist fatally shot six worshippers at a Sikh temple."},
+{y:2015,date:"June 17, 2015",tag:"Event",n:"Emanuel AME",title:"Emanuel AME Church shooting",people:["Dylann Roof"],place:"Charleston, South Carolina",text:"Murdered nine Black parishioners during a Bible study at Emanuel African Methodist Episcopal Church."},
+{y:2018,date:"October 27, 2018",tag:"Event",n:"Tree of Life",title:"Tree of Life synagogue shooting",people:["Robert Bowers"],place:"Pittsburgh, Pennsylvania",text:"Killed 11 worshippers in the deadliest antisemitic attack in U.S. history."},
+{y:2019,date:"August 3, 2019",tag:"Event",n:"El Paso",title:"El Paso Walmart shooting",people:["Patrick Crusius"],place:"El Paso, Texas",text:"A mass shooting that targeted Hispanic shoppers and killed 23 people."},
+{y:2021,date:"January 6, 2021",tag:"Event",n:"Jan. 6",title:"Attack on the U.S. Capitol",people:["Oath Keepers and Proud Boys leaders"],place:"Washington, D.C.",text:"Multiple leaders and members of these far-right anti-government and nationalist groups were convicted of seditious conspiracy and related federal offenses for their roles in the attack."},
+{y:2022,date:"May 14, 2022",tag:"Event",n:"Buffalo",title:"Buffalo supermarket shooting",people:["Payton Gendron"],place:"Buffalo, New York",text:"A racially motivated mass shooting that killed 10 Black shoppers and workers."}
+];
+const byYear={};EVENTS.forEach(([n,y])=>(byYear[y]=byYear[y]||[]).push(n));HISTORY.forEach(e=>(byYear[e.y]=byYear[e.y]||[]).push(e.n));
 const $=id=>document.getElementById(id),main=$("main"),crumbs=$("crumbs"),dlg=$("dlg");
 let st={y:null,m:null},cur=null,curC=2000,tlScroll=0,page="home",full=true,fullC=null,zoomFrom=null,setIdx=null,lbIndex=0;
 const key=(y,m,d)=>`${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
@@ -358,7 +391,9 @@ function year(y){
   const ev=byYear[y];
   let h=`<h2 class="c" style="text-align:left;margin-top:12px">${y}${ev?" · "+ev.join(", "):""}</h2><div class="months">`;
   for(let mo=0;mo<12;mo++)h+=`<button class="m" data-m="${mo}"><h3>${MN[mo]}</h3><div class="dgrid">${WD.map(d=>`<span>${d}</span>`).join("")}${cells(y,mo,(d)=>`<div>${d}</div>`)}</div></button>`;
-  main.innerHTML=pn(y>100?[y-1,"",y-1]:null,y<NOW?[y+1,"",y+1]:null)+h+"</div>";
+  const hs=HISTORY.filter(e=>e.y===y),E=t=>String(t).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+  const cards=hs.length?'<div class="hist">'+hs.map(e=>`<article class="hc"><span class="tag">${E(e.tag)}</span><h3>${E(e.title)}</h3><p class="meta">${E(e.date)}${e.place?" \u00b7 "+E(e.place):""}</p>${e.people&&e.people.length?`<p class="who">${E(e.people.join(", "))}</p>`:""}<p>${E(e.text)}</p></article>`).join("")+"</div>":"";
+  main.innerHTML=pn(y>100?[y-1,"",y-1]:null,y<NOW?[y+1,"",y+1]:null)+h.replace('<div class="months">',cards+'<div class="months">')+"</div>";
   main.querySelectorAll(".m").forEach(b=>b.onclick=()=>go(y,+b.dataset.m));
 }
 function cells(y,m,f){
