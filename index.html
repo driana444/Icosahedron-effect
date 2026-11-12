@@ -381,7 +381,7 @@ const SECTIONS={
   writers:{title:"Writer's Board",kind:"writing",items:[{title:"What Is Steven Saying?",body:"Disclosure Day wasn't the first clue. He's been saying something for a while. So, do aliens exist?"}]}
 };
 const cnt=p=>{const s=SECTIONS[p];return s.sets?s.sets.reduce((a,x)=>a+x.items.length,0):s.items.length};
-const PAGES=[["home","Home"],["timeline","Full timeline"],["pictures","Pictures"],["printing","3D Printing"],["music","Music"],["film","Film"],["pencil","#2 Pencil Drawings"],["vlog","Inserts by Dri"],["variety","Variety Show"],["writers","Writer's Board"]];
+const PAGES=[["home","Home"],["timeline","Full timeline"],["pictures","Pictures"],["printing","3D Printing"],["music","Music"],["film","Film"],["pencil","#2 Pencil Drawings"],["vlog","Inserts by Dri"]];
 function drawSide(){
   $("side").innerHTML=PAGES.map(([p,t])=>{
     let h=`<button data-page="${p}"${p===page?' aria-current="page"':""}>${t}</button>`;
