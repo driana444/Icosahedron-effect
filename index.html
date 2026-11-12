@@ -187,6 +187,19 @@ h2,h3,.box b{font-weight:700;letter-spacing:-.01em}
 .box:hover{outline:2px solid #62d860}
 .box.tlb{background-color:#62d860;border-color:#62d860}
 .box.tlb{grid-row:span 2;aspect-ratio:auto}
+/* timeline readability: uniform high-contrast tiles */
+[data-fullc]{background:#1e4630!important;color:#eaf7d5!important;box-shadow:inset 0 0 0 1px #3f8f5a!important;font-weight:700}
+[data-fullc][aria-pressed="true"],[data-fullc]:hover{background:#62d860!important;color:#143023!important;box-shadow:none!important}
+.cpick button{font-size:1.25rem}
+#side [data-fullc]{font-size:.95rem}
+.tl .yb{background:#1e4630!important;box-shadow:inset 0 0 0 1px #3f8f5a!important;color:#eaf7d5!important}
+.tl .yb b{color:#eaf7d5!important;opacity:1!important;font-weight:700;font-size:1.15rem}
+.tl .yb small{color:#b7d99a!important;opacity:1!important;font-size:.78rem}
+.tl .yb.ev{background:#62d860!important;box-shadow:none!important}
+.tl .yb.ev b,.tl .yb.ev small{color:#143023!important}
+.tl .yb:not(.ev):not(.art){background:#173b28!important}
+.tl .yb:hover{outline:2px solid #62d860}
+
 @media(max-width:560px){.box b{font-size:.8rem;overflow-wrap:anywhere}.box small{font-size:.62rem}.box{padding:6px;border-radius:14px}}.box.tlb b,.box.tlb small{color:#143023}
 #side{border-right:0}
 #side button{border:0;border-radius:12px}
@@ -547,7 +560,7 @@ function fullView(){
   for(let i=0;i<100;i++){const y=c+i;if(y>NOW)break;ys.push(y)}
   let h=search()+`<div class="pn"><button data-fullback>\u2039 Full timeline</button><span></span></div><h2 class="c" style="margin-top:0">${c}'s</h2>`;
   if(ys.length){
-    h+='<div class="tl evgrid">'+ys.map(y=>{const ev=byYear[y];return `<button class="yb ev${hasArt(y)?" art":""}" data-y="${y}" aria-label="${y}${ev?": "+ev.join(", "):""}"><b>${y}</b>${ev?`<small>${ev.join(", ")}</small>`:""}</button>`}).join("")+"</div>";
+    h+='<div class="tl evgrid">'+ys.map(y=>{const ev=byYear[y];return `<button class="yb${ev?" ev":""}${hasArt(y)?" art":""}" data-y="${y}" aria-label="${y}${ev?": "+ev.join(", "):""}"><b>${y}</b>${ev?`<small>${ev.join(", ")}</small>`:""}</button>`}).join("")+"</div>";
   }else h+=`<div class="empty">Nothing listed in the ${c}s yet.</div>`;
   main.innerHTML=h;
   main.style.setProperty("--c",hue(c));
