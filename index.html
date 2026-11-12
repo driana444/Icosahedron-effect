@@ -284,7 +284,7 @@ const ART={};
 const NOW=2026,MN=["January","February","March","April","May","June","July","August","September","October","November","December"],WD=["S","M","T","W","T","F","S"];
 const byYear={};EVENTS.forEach(([n,y])=>(byYear[y]=byYear[y]||[]).push(n));
 const $=id=>document.getElementById(id),main=$("main"),crumbs=$("crumbs"),dlg=$("dlg");
-let st={y:null,m:null},cur=null,curC=2000,tlScroll=0,page="home",full=true,fullC=null,setIdx=null,lbIndex=0;
+let st={y:null,m:null},cur=null,curC=2000,tlScroll=0,page="home",full=true,fullC=null,zoomFrom=null,setIdx=null,lbIndex=0;
 const key=(y,m,d)=>`${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
 const hasArt=(y,m)=>Object.keys(ART).some(k=>k.startsWith(m==null?y+"-":y+"-"+String(m+1).padStart(2,"0")));
 function featured(){
@@ -305,7 +305,7 @@ function onClick(e){
   if(t.dataset.ref!==undefined){const L=lbList();const k=L.findIndex(x=>x.i===+t.dataset.ref);showLb(Math.max(k,0));if(!$("lb").open)$("lb").showModal();return}
   if(t.dataset.zoom!==undefined){showLb(+t.dataset.zoom);if(!$("lb").open)$("lb").showModal();return}
   if(t.dataset.jump){page="timeline";curC=+t.dataset.jump;full=false;fullC=null;st={y:null,m:null};render();scrollTo(0,0)}
-  else if(t.dataset.fullc){page="timeline";st={y:null,m:null};fullC=+t.dataset.fullc;render();scrollTo(0,0)}
+  else if(t.dataset.fullc){page="timeline";st={y:null,m:null};fullC=+t.dataset.fullc;zoomFrom=t.getBoundingClientRect();render();scrollTo(0,0)}
   else if("fullback" in t.dataset){fullC=null;render();scrollTo(0,0)}
   else if("full" in t.dataset){const was=page==="timeline"&&full;page="timeline";full=!was;fullC=null;st={y:null,m:null};render();scrollTo(0,0)}
   else if("today" in t.dataset){page="timeline";const n=new Date();go(Math.min(n.getFullYear(),NOW),n.getMonth())}
@@ -567,6 +567,11 @@ function fullView(){
   }else h+=`<div class="empty">Nothing listed in the ${c}s yet.</div>`;
   main.innerHTML=h;
   main.style.setProperty("--c",hue(c));
+  if(zoomFrom&&!matchMedia("(prefers-reduced-motion:reduce)").matches){
+    const r=main.getBoundingClientRect(),ox=zoomFrom.left+zoomFrom.width/2-r.left,oy=zoomFrom.top+zoomFrom.height/2-r.top;
+    main.animate([{transform:"scale(.2)",opacity:0,transformOrigin:ox+"px "+oy+"px"},{transform:"scale(1)",opacity:1,transformOrigin:ox+"px "+oy+"px"}],{duration:450,easing:"cubic-bezier(.2,.8,.2,1)"});
+  }
+  zoomFrom=null;
   main.querySelectorAll(".yb").forEach(b=>b.onclick=()=>go(+b.dataset.y,null));
 }
 $("foot").innerHTML="\u00a9 "+new Date().getFullYear()+" The Icosahedron Effect. All rights reserved. Please don't copy or reuse the art without permission.<br>Website built with AI assistance. All artwork is my own.";
