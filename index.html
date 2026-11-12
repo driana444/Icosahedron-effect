@@ -82,7 +82,7 @@ h1,h2,h3,.yb,.m,.d,.jump button,#crumbs button,.pn button,.find label,.find inpu
 #side button{font:inherit;font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;text-align:left;border:2px solid transparent;background:none;color:var(--ink);padding:10px 12px;border-radius:8px;cursor:pointer;min-height:44px}
 #side button:hover{border-color:var(--green)}
 #side button[aria-current="page"]{background:var(--forest);color:#eaf7ee}
-.home{display:grid;grid-template-columns:repeat(3,minmax(0,200px));justify-content:center;gap:14px;margin-top:10px}
+.home{display:grid;grid-template-columns:repeat(4,minmax(0,200px));justify-content:center;gap:14px;margin-top:10px}
 @media(max-width:560px){.home{gap:8px}.box{padding:8px}.box b{font-size:.95rem}.box small{font-size:.7rem}}
 .box{aspect-ratio:1;border:3px solid var(--forest);color:var(--ink);font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;cursor:pointer;padding:14px;display:flex;flex-direction:column;justify-content:flex-end;gap:4px;text-align:left;background-color:var(--cell);background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:100% calc(100%/14),calc(100%/14) 100%}
 .box b{font-size:clamp(1.1rem,3vw,1.5rem);background:var(--cell);align-self:flex-start;padding:0 4px}
@@ -185,7 +185,9 @@ h2,h3,.box b{font-weight:700;letter-spacing:-.01em}
 .box{background-color:#1e4630;border:1px solid #3f8f5a;color:#eaf7d5;border-radius:18px}
 .box b{font-weight:600;color:#eaf7d5}.box small{color:#b7d99a;font-size:.8rem}
 .box:hover{outline:2px solid #62d860}
-.box.tlb{background-color:#62d860;border-color:#62d860}.box.tlb b,.box.tlb small{color:#143023}
+.box.tlb{background-color:#62d860;border-color:#62d860}
+.box.tlb{grid-row:span 2;aspect-ratio:auto}
+@media(max-width:560px){.box b{font-size:.8rem;overflow-wrap:anywhere}.box small{font-size:.62rem}.box{padding:6px;border-radius:14px}}.box.tlb b,.box.tlb small{color:#143023}
 #side{border-right:0}
 #side button{border:0;border-radius:12px}
 #side button:hover{background:color-mix(in srgb,var(--c) 14%,var(--bg))}
