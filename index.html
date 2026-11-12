@@ -187,9 +187,6 @@ h2,h3,.box b{font-weight:700;letter-spacing:-.01em}
 .box:hover{outline:2px solid #62d860}
 .box.tlb{background-color:#62d860;border-color:#62d860}
 .box.tlb{grid-row:span 2;aspect-ratio:auto}
-.dpick{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:6px 0 14px}
-.dpick button{background:#17402b;color:#f2fbe9;border:0;border-radius:12px;padding:8px 12px;font-size:1rem;font-weight:600;cursor:pointer}
-.dpick button[aria-pressed="true"],.dpick button:hover{background:#337a50;color:#fff}
 /* timeline readability: simple contrast, no borders, no bright fills */
 [data-fullc]{background:#1e4630!important;color:#f2fbe9!important;box-shadow:none!important;border:0!important;font-weight:700}
 [data-fullc][aria-pressed="true"],[data-fullc]:hover{background:#337a50!important;color:#fff!important;box-shadow:none!important}
@@ -284,7 +281,7 @@ const ART={};
 const NOW=2026,MN=["January","February","March","April","May","June","July","August","September","October","November","December"],WD=["S","M","T","W","T","F","S"];
 const byYear={};EVENTS.forEach(([n,y])=>(byYear[y]=byYear[y]||[]).push(n));
 const $=id=>document.getElementById(id),main=$("main"),crumbs=$("crumbs"),dlg=$("dlg");
-let st={y:null,m:null},cur=null,curC=2000,tlScroll=0,page="home",full=true,fullC=null,fullD=null,setIdx=null,lbIndex=0;
+let st={y:null,m:null},cur=null,curC=2000,tlScroll=0,page="home",full=true,fullC=null,setIdx=null,lbIndex=0;
 const key=(y,m,d)=>`${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
 const hasArt=(y,m)=>Object.keys(ART).some(k=>k.startsWith(m==null?y+"-":y+"-"+String(m+1).padStart(2,"0")));
 function featured(){
@@ -305,8 +302,7 @@ function onClick(e){
   if(t.dataset.ref!==undefined){const L=lbList();const k=L.findIndex(x=>x.i===+t.dataset.ref);showLb(Math.max(k,0));if(!$("lb").open)$("lb").showModal();return}
   if(t.dataset.zoom!==undefined){showLb(+t.dataset.zoom);if(!$("lb").open)$("lb").showModal();return}
   if(t.dataset.jump){page="timeline";curC=+t.dataset.jump;full=false;fullC=null;st={y:null,m:null};render();scrollTo(0,0)}
-  else if(t.dataset.fulld){fullD=+t.dataset.fulld;render()}
-  else if(t.dataset.fullc){page="timeline";st={y:null,m:null};fullC=+t.dataset.fullc;fullD=null;render();scrollTo(0,0)}
+  else if(t.dataset.fullc){page="timeline";st={y:null,m:null};fullC=+t.dataset.fullc;render();scrollTo(0,0)}
   else if("fullback" in t.dataset){fullC=null;render();scrollTo(0,0)}
   else if("full" in t.dataset){const was=page==="timeline"&&full;page="timeline";full=!was;fullC=null;st={y:null,m:null};render();scrollTo(0,0)}
   else if("today" in t.dataset){page="timeline";const n=new Date();go(Math.min(n.getFullYear(),NOW),n.getMonth())}
@@ -564,12 +560,7 @@ function fullView(){
   for(let i=0;i<100;i++){const y=c+i;if(y>NOW)break;ys.push(y)}
   let h=search()+`<div class="pn"><button data-fullback>\u2039 Full timeline</button><span></span></div><h2 class="c" style="margin-top:0">${c}'s</h2>`;
   if(ys.length){
-    if(fullD==null){fullD=0;for(let d=0;d<10;d++){if(ys.some(y=>y>=c+d*10&&y<c+d*10+10&&byYear[y])){fullD=d;break}}}
-    h+='<div class="dpick">';
-    for(let d=0;d<10;d++){if(c+d*10>NOW)break;h+=`<button data-fulld="${d}" aria-pressed="${fullD==d}">${c+d*10}s</button>`}
-    h+='</div>';
-    const sh=ys.filter(y=>y>=c+fullD*10&&y<c+fullD*10+10);
-    h+='<div class="tl evgrid">'+sh.map(y=>{const ev=byYear[y];return `<button class="yb${ev?" ev":""}${hasArt(y)?" art":""}" data-y="${y}" aria-label="${y}${ev?": "+ev.join(", "):""}"><b>${y}</b>${ev?`<small>${ev.join(", ")}</small>`:""}</button>`}).join("")+"</div>";
+    h+='<div class="tl evgrid">'+ys.map(y=>{const ev=byYear[y];return `<button class="yb${ev?" ev":""}${hasArt(y)?" art":""}" data-y="${y}" aria-label="${y}${ev?": "+ev.join(", "):""}"><b>${y}</b>${ev?`<small>${ev.join(", ")}</small>`:""}</button>`}).join("")+"</div>";
   }else h+=`<div class="empty">Nothing listed in the ${c}s yet.</div>`;
   main.innerHTML=h;
   main.style.setProperty("--c",hue(c));
