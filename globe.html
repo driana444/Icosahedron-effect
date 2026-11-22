@@ -17,7 +17,9 @@ h1{margin:18px 0 0;text-align:center;font-size:1.1rem;letter-spacing:.12em;text-
 .lab{position:absolute;max-width:230px;pointer-events:auto;z-index:2;background:#02150bdd;border:1px solid #62d860;border-radius:10px;padding:8px 11px;font-size:.8rem;line-height:1.35;transform:translate(14px,-50%)}.lab .more{display:none;margin-top:3px}.lab:hover{z-index:5}.lab:hover .more{display:block}.lab b{display:block;font-size:.9rem;color:#fff}.lab small{display:block;opacity:.75;margin-bottom:3px}.lab span{opacity:.92}
 #tip{position:absolute;pointer-events:none;background:#02150bcc;border:1px solid #62d860;border-radius:8px;padding:4px 9px;font-size:.8rem;display:none;white-space:nowrap}
 #src{text-align:left;margin-top:22px}#src h2{font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:#62d860;margin:0 0 10px}.ev{background:#0c3a23;border-radius:12px;padding:10px 14px;margin-bottom:8px;font-size:.88rem}.ev p{margin:4px 0 6px}.ev small{opacity:.7}.cit{font-size:.75rem;opacity:.8;padding-left:1.4em;text-indent:-1.4em;margin-top:3px;word-break:break-word}.cit a{color:#8ff08c}.note{font-size:.72rem;opacity:.65;margin-top:10px}
+body.pv #ctl,body.pv h1{display:none}body.pv{overflow:hidden}body.pv #stage{height:100vh;min-height:0}body.pv .lab,body.pv #tip{display:none!important}
 </style></head><body>
+<script>if(/[?&]preview=1/.test(location.search))document.documentElement.className=document.body.className="pv"</script>
 <h1 id="h">The Icosahedron Effect · Globe timeline</h1><script>if(top!==self)document.getElementById("h").style.display="none"</script>
 <div id="stage"><canvas id="c"></canvas><div id="tip"></div></div>
 <div id="ctl">
@@ -76,7 +78,7 @@ function commit(){setDec(yr.value.replace(/\D/g,'').slice(0,4))}
 yr.addEventListener('focus',()=>yr.select());yr.addEventListener('change',commit);yr.addEventListener('keydown',e=>{if(e.key==='Enter'){commit();yr.blur()}});
 document.getElementById('prev').onclick=()=>step(-1);document.getElementById('next').onclick=()=>step(1);
 addEventListener('keydown',e=>{if(document.activeElement===yr)return;if(e.key==='ArrowLeft')step(-1);if(e.key==='ArrowRight')step(1)});
-setDec(1990);
+setDec(/[?&]preview=1/.test(location.search)?2020:1990);
 const ray=new T.Raycaster(),mv=new T.Vector2();
 cv.addEventListener('pointermove',e=>{const b=cv.getBoundingClientRect();mv.set((e.clientX-b.left)/b.width*2-1,-(e.clientY-b.top)/b.height*2+1);ray.setFromCamera(mv,cam);const h=ray.intersectObjects(pinMeshes.filter(m=>m.visible))[0];if(h){tip.style.display='block';tip.style.left=e.clientX-b.left+12+'px';tip.style.top=e.clientY-b.top+12+'px';tip.textContent=h.object.userData.t+' · '+h.object.userData.y}else tip.style.display='none'});
 const wp=new T.Vector3();
