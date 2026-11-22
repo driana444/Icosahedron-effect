@@ -18,13 +18,19 @@ h1{margin:18px 0 0;text-align:center;font-size:1.1rem;letter-spacing:.12em;text-
 #tip{position:absolute;pointer-events:none;background:#02150bcc;border:1px solid #62d860;border-radius:8px;padding:4px 9px;font-size:.8rem;display:none;white-space:nowrap}
 #src{text-align:left;margin-top:22px}#src h2{font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:#62d860;margin:0 0 10px}.ev{background:#0c3a23;border-radius:12px;padding:10px 14px;margin-bottom:8px;font-size:.88rem}.ev p{margin:4px 0 6px}.ev small{opacity:.7}.cit{font-size:.75rem;opacity:.8;padding-left:1.4em;text-indent:-1.4em;margin-top:3px;word-break:break-word}.cit a{color:#8ff08c}.note{font-size:.72rem;opacity:.65;margin-top:10px}
 body.pv #ctl,body.pv h1{display:none}body.pv{overflow:hidden}body.pv #stage{height:100vh;min-height:0}body.pv .lab,body.pv #tip{display:none!important}
+#geo{position:absolute;left:0;top:0;pointer-events:none;cursor:auto;z-index:1}
+#ui{position:absolute;right:12px;top:12px;display:flex;flex-direction:column;gap:6px;align-items:flex-end;z-index:3}#ui button{width:38px;height:38px;border-radius:10px;border:1px solid #62d860;background:#02150bcc;color:#e9fff0;font-size:1.3rem;cursor:pointer}#ui button:hover{background:#0e3b24}
+#lvl{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:#62d860;background:#02150bcc;border:1px solid #62d86088;border-radius:8px;padding:3px 8px}
+#info{position:absolute;left:12px;top:12px;max-width:260px;background:#02150bee;border:1px solid #62d860;border-radius:12px;padding:12px 14px;font-size:.8rem;line-height:1.4;z-index:4;text-align:left}#info h3{margin:0 0 6px;font-size:1rem;color:#fff;padding-right:20px}#info dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:2px 10px}#info dt{opacity:.65}#info dd{margin:0}#info .x{position:absolute;right:8px;top:6px;background:none;border:0;color:#e9fff0;font-size:1.1rem;cursor:pointer}
+body.pv #geo,body.pv #ui,body.pv #info{display:none!important}
+@media(max-width:600px){#info{max-width:190px;font-size:.72rem}}
 </style></head><body>
 <script>if(/[?&]preview=1/.test(location.search))document.documentElement.className=document.body.className="pv"</script>
 <h1 id="h">The Icosahedron Effect · Globe timeline</h1><script>if(top!==self)document.getElementById("h").style.display="none"</script>
-<div id="stage"><canvas id="c"></canvas><div id="tip"></div></div>
+<div id="stage"><canvas id="c"></canvas><canvas id="geo"></canvas><div id="tip"></div><div id="ui"><button id="zi" aria-label="Zoom in">+</button><button id="zo" aria-label="Zoom out">−</button><div id="lvl"></div></div><div id="info" style="display:none"></div></div>
 <div id="ctl">
 <div class="row"><button class="st" id="prev" aria-label="Previous decade">‹</button><input id="yr" type="text" inputmode="numeric" value="1990s" aria-label="Decade" maxlength="5"><button class="st" id="next" aria-label="Next decade">›</button></div>
-<div class="sub" id="era"></div><div class="sub" id="leg"><span style="color:#fff">●</span> Event &nbsp; <span style="color:#ffd24a">●</span> Group &nbsp; <span style="color:#ff8a5c">●</span> Person</div><div id="src"></div>
+<div class="sub" id="era"></div><div class="sub" id="zh" style="font-size:.8rem;opacity:.6">Scroll or pinch to zoom · click a country or state for facts</div><div class="sub" id="leg"><span style="color:#fff">●</span> Event &nbsp; <span style="color:#ffd24a">●</span> Group &nbsp; <span style="color:#ff8a5c">●</span> Person</div><div id="src"></div><div id="atl" class="note" style="font-size:.72rem;opacity:.65;text-align:left;margin-top:8px">Atlas layer: country shapes from Natural Earth via world-atlas (public domain); U.S. state shapes from the U.S. Census Bureau via us-atlas; country facts from mledoze/countries (ODbL 1.0); populations from country-json (approximate, c. 2018); cities from GeoNames (CC BY 4.0) via all-the-cities. Borders are modern.</div>
 
 
 </div>
@@ -44,24 +50,34 @@ const halo=new T.Mesh(new T.SphereGeometry(1.14,48,32),new T.ShaderMaterial({tra
  fragmentShader:'varying vec3 n;void main(){float i=pow(.62-dot(n,vec3(0,0,1.)),3.);gl_FragColor=vec4(.38,.85,.38,1.)*i;}'}));scene.add(halo);
 const ll2v=(lat,lon,R=1)=>{const a=(90-lat)*Math.PI/180,b=(lon+180)*Math.PI/180;return new T.Vector3(-R*Math.sin(a)*Math.cos(b),R*Math.cos(a),R*Math.sin(a)*Math.sin(b))};
 const topo=await (await fetch('globe-countries.json')).json();
-const W=4096,H=2048,cx=document.createElement('canvas');cx.width=W;cx.height=H;const g2=cx.getContext('2d');
+const PV=/[?&]preview=1/.test(location.search);const W=(!PV&&r.capabilities.maxTextureSize>=8192&&!/Mobi|Android/i.test(navigator.userAgent))?8192:4096,H=W/2,cx=document.createElement('canvas');cx.width=W;cx.height=H;const g2=cx.getContext('2d');
 g2.fillStyle='#0a5230';g2.fillRect(0,0,W,H);
 const X=l=>(l+180)/360*W,Y=a=>(90-a)/180*H;
 const feats=topojson.feature(topo,topo.objects.countries).features;
 const path=(f)=>{const ps=f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.coordinates;g2.beginPath();for(const poly of ps)for(const ring of poly){ring.forEach(([lo,la],i)=>i?g2.lineTo(X(lo),Y(la)):g2.moveTo(X(lo),Y(la)));g2.closePath()}};
 feats.forEach((f,i)=>{const h=(i*47)%5;g2.fillStyle=['#37a85a','#43b865','#2f9a50','#4cc26a','#3aae5e'][h];path(f);g2.fill('evenodd')});
-g2.lineJoin='round';g2.lineCap='round';g2.strokeStyle='rgba(214,255,212,.9)';g2.lineWidth=2.2;
+g2.lineJoin='round';g2.lineCap='round';g2.strokeStyle='rgba(214,255,212,.9)';g2.lineWidth=2.2*W/4096;
 feats.forEach(f=>{const ps=f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.coordinates;g2.beginPath();for(const poly of ps)for(const ring of poly)for(let i=1;i<ring.length;i++){const [x0,y0]=ring[i-1],[x1,y1]=ring[i];if(Math.abs(x1-x0)>170||(y0<-89.5&&y1<-89.5)||(Math.abs(x0)>179.9&&Math.abs(x1)>179.9&&x0*x1>0))continue;g2.moveTo(X(x0),Y(y0));g2.lineTo(X(x1),Y(y1))}g2.stroke()});
 const tx=new T.CanvasTexture(cx);tx.anisotropy=8;tx.colorSpace=T.SRGBColorSpace;
-grp.add(new T.Mesh(new T.SphereGeometry(1.003,96,64),new T.MeshBasicMaterial({map:tx})));
+const land=new T.Mesh(new T.SphereGeometry(1.003,96,64),new T.MeshBasicMaterial({map:tx}));grp.add(land);
+const usTopo=await (await fetch('globe-states.json')).json();
+const stateFeats=topojson.feature(usTopo,usTopo.objects.states).features;
+const stMat=new T.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false});
+{const c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d'),X2=l=>(l+180)/360*W,Y2=a=>(90-a)/180*H;x.strokeStyle='rgba(235,255,232,.95)';x.lineWidth=1.6*W/4096;x.lineJoin='round';
+ const m=topojson.mesh(usTopo,usTopo.objects.states,(a,b)=>a!==b);for(const ln of m.coordinates){x.beginPath();ln.forEach(([lo,la],i)=>i?x.lineTo(X2(lo),Y2(la)):x.moveTo(X2(lo),Y2(la)));x.stroke()}
+ const t2=new T.CanvasTexture(c);t2.anisotropy=8;t2.colorSpace=T.SRGBColorSpace;stMat.map=t2;grp.add(new T.Mesh(new T.SphereGeometry(1.0045,96,64),stMat))}
 const pinMeshes=[];
 PINS.forEach(p=>{const m=new T.Mesh(new T.SphereGeometry(.03,12,8),new T.MeshBasicMaterial({color:COL[p.tag]||0xffffff}));m.position.copy(ll2v(p.ll[0],p.ll[1],1.02));m.userData=p;m.visible=false;grp.add(m);pinMeshes.push(m)});
 grp.rotation.y=-1.0;grp.rotation.x=.3;
 function size(){const w=cv.clientWidth,h=cv.clientHeight;r.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()}addEventListener('resize',size);size();
-let drag=false,lx=0,ly=0,vy=.0016,t0=0;
-cv.addEventListener('pointerdown',e=>{drag=true;lx=e.clientX;ly=e.clientY;cv.style.cursor='grabbing'});
-addEventListener('pointerup',()=>{drag=false;cv.style.cursor='grab'});
-addEventListener('pointermove',e=>{if(drag){grp.rotation.y+=(e.clientX-lx)*.006;grp.rotation.x=Math.max(-1.2,Math.min(1.2,grp.rotation.x+(e.clientY-ly)*.006));lx=e.clientX;ly=e.clientY}});
+let drag=false,lx=0,ly=0,vy=.0016,t0=0,moved=0,dist=4.1,distT=4.1;const DMIN=1.35,DMAX=7,ptrs=new Map();let pinch0=0,pinchD0=0;
+const zf=()=>Math.pow(dist/4.1,1.1);
+cv.addEventListener('pointerdown',e=>{ptrs.set(e.pointerId,[e.clientX,e.clientY]);if(ptrs.size===1){drag=true;moved=0;lx=e.clientX;ly=e.clientY;cv.style.cursor='grabbing'}else if(ptrs.size===2){drag=false;const [a,b]=[...ptrs.values()];pinch0=Math.hypot(a[0]-b[0],a[1]-b[1]);pinchD0=distT}});
+const up=e=>{ptrs.delete(e.pointerId);if(ptrs.size===0){const was=drag;drag=false;cv.style.cursor='grab';if(was&&moved<5&&e.target===cv)pickAt(e.clientX,e.clientY)}};addEventListener('pointerup',up);addEventListener('pointercancel',up);
+addEventListener('pointermove',e=>{if(ptrs.has(e.pointerId))ptrs.set(e.pointerId,[e.clientX,e.clientY]);
+ if(ptrs.size===2){const [a,b]=[...ptrs.values()],d=Math.hypot(a[0]-b[0],a[1]-b[1]);if(pinch0)distT=Math.max(DMIN,Math.min(DMAX,pinchD0*pinch0/d));return}
+ if(drag){moved+=Math.abs(e.clientX-lx)+Math.abs(e.clientY-ly);const k=.006*zf();grp.rotation.y+=(e.clientX-lx)*k;grp.rotation.x=Math.max(-1.3,Math.min(1.3,grp.rotation.x+(e.clientY-ly)*k));lx=e.clientX;ly=e.clientY;grp.userData.fy=null}});
+if(!PV)cv.addEventListener('wheel',e=>{e.preventDefault();distT=Math.max(DMIN,Math.min(DMAX,distT*Math.exp(e.deltaY*.0015)))},{passive:false});
 function flyTo(ll){const tgt=Math.PI/2-(ll[1]+180)*Math.PI/180;let d=((tgt-grp.rotation.y)%(2*Math.PI)+3*Math.PI)%(2*Math.PI)-Math.PI;grp.userData.fy=grp.rotation.y+d;grp.userData.fx=ll[0]*Math.PI/180*.8}
 const yr=document.getElementById('yr'),stage=document.getElementById('stage'),era=document.getElementById('era'),srcBox=document.getElementById('src');
 let dec=1990,labels=[];const near=d=>DECS.reduce((b,x)=>Math.abs(x-d)<Math.abs(b-d)?x:b,DECS[0]);
@@ -73,20 +89,74 @@ function setDec(d){d=near(Math.floor((+d||dec)/10)*10);dec=d;yr.value=d+'s';
  labels.forEach(l=>l.el.remove());
  labels=now.map(p=>{const el=document.createElement('div');el.className='lab';el.innerHTML=`<b>${esc(p.t)}</b><small>${esc(p.d)}${p.p?" · "+esc(p.p):""}</small><span class="more">${esc(p.x)}</span>`;stage.append(el);return {p,el}});
  srcBox.innerHTML='<h2>Sources, '+d+'s</h2>'+now.map(p=>`<div class="ev"><b>${esc(p.t)}</b> <small>${esc(p.d)} · ${esc(p.tag)}</small>${p.who?`<div class="cit">${esc(p.who)}</div>`:""}<p>${esc(p.x)}</p>${p.pin?`<div class="cit">Pin: ${esc(p.pin)}</div>`:""}`+p.s.map(q=>`<div class="cit">${esc(q.c)} <a href="${q.u}" target="_blank" rel="noopener">${esc(q.u)}</a></div>`).join('')+'</div>').join('')+'<p class="note">Entries are Dri\u2019s research notes; the sources listed support them (accessed November 22, 2026). Wikipedia text is licensed CC BY-SA 4.0 (creativecommons.org/licenses/by-sa/4.0/); other sources are linked for reference. Country borders shown are modern.</p>';
- if(now.length){let la=0,lo=0;now.forEach(p=>{la+=p.ll[0];lo+=p.ll[1]});flyTo([la/now.length,lo/now.length])}}
+ if(now.length){let la=0,lo=0;now.forEach(p=>{la+=p.ll[0];lo+=p.ll[1]});flyTo([la/now.length,lo/now.length]);distT=Math.min(distT,3.6)}}
 function commit(){setDec(yr.value.replace(/\D/g,'').slice(0,4))}
 yr.addEventListener('focus',()=>yr.select());yr.addEventListener('change',commit);yr.addEventListener('keydown',e=>{if(e.key==='Enter'){commit();yr.blur()}});
 document.getElementById('prev').onclick=()=>step(-1);document.getElementById('next').onclick=()=>step(1);
 addEventListener('keydown',e=>{if(document.activeElement===yr)return;if(e.key==='ArrowLeft')step(-1);if(e.key==='ArrowRight')step(1)});
 setDec(/[?&]preview=1/.test(location.search)?2020:1990);
 const ray=new T.Raycaster(),mv=new T.Vector2();
-cv.addEventListener('pointermove',e=>{const b=cv.getBoundingClientRect();mv.set((e.clientX-b.left)/b.width*2-1,-(e.clientY-b.top)/b.height*2+1);ray.setFromCamera(mv,cam);const h=ray.intersectObjects(pinMeshes.filter(m=>m.visible))[0];if(h){tip.style.display='block';tip.style.left=e.clientX-b.left+12+'px';tip.style.top=e.clientY-b.top+12+'px';tip.textContent=h.object.userData.t+' · '+h.object.userData.y}else tip.style.display='none'});
+let hvT=0;cv.addEventListener('pointermove',e=>{if(drag||ptrs.size>1)return;const b=cv.getBoundingClientRect();mv.set((e.clientX-b.left)/b.width*2-1,-(e.clientY-b.top)/b.height*2+1);ray.setFromCamera(mv,cam);const h=ray.intersectObjects(pinMeshes.filter(m=>m.visible))[0];if(h){tip.style.display='block';tip.style.left=e.clientX-b.left+12+'px';tip.style.top=e.clientY-b.top+12+'px';tip.textContent=h.object.userData.t+' · '+h.object.userData.y;cv.style.cursor='pointer';return}
+ if(PV){tip.style.display='none';return}const now=performance.now();if(now-hvT<70)return;hvT=now;const ll=llAt(e.clientX,e.clientY);let t='';if(ll){const st=dist<2.6&&inUS(ll)?findIn(SF,ll):null;const c=st?null:findIn(CF,ll);t=st?st.name:(c&&CBY[c.id]?CBY[c.id].n:'')}
+ if(t){tip.style.display='block';tip.style.left=e.clientX-b.left+12+'px';tip.style.top=e.clientY-b.top+12+'px';tip.textContent=t;cv.style.cursor='pointer'}else{tip.style.display='none';cv.style.cursor='grab'}});
 const wp=new T.Vector3();
-function placeLabels(){const w=cv.clientWidth,h=cv.clientHeight,vs=[];for(const o of labels){const m=pinMeshes.find(m=>m.userData===o.p);m.getWorldPosition(wp);const vis=wp.z>0.12;o.el.style.display=vis?'block':'none';if(!vis)continue;const v=wp.clone().project(cam);o.x=(v.x+1)/2*w;o.y=(1-v.y)/2*h;o.ly=o.y;vs.push(o)}
+function placeLabels(){if(dist<3.2){document.querySelectorAll('.lab').forEach(l=>l.style.display='none');return}const w=cv.clientWidth,h=cv.clientHeight,vs=[];for(const o of labels){const m=pinMeshes.find(m=>m.userData===o.p);m.getWorldPosition(wp);const vis=wp.z>0.12;o.el.style.display=vis?'block':'none';if(!vis)continue;const v=wp.clone().project(cam);o.x=(v.x+1)/2*w;o.y=(1-v.y)/2*h;o.ly=o.y;vs.push(o)}
  vs.sort((a,b)=>a.y-b.y);let last=-1e9;for(const o of vs){const hh=o.el.offsetHeight||50;o.ly=Math.max(o.y,last+hh/2+8);last=o.ly+hh/2}
  for(const o of vs){const flip=o.x>w-250;o.el.style.left=o.x+'px';o.el.style.top=o.ly+'px';o.el.style.transform=flip?'translate(calc(-100% - 14px),-50%)':'translate(14px,-50%)'}}
-(function loop(t){const f=(t||0)*.001;grp.position.y=Math.sin(f*1.1)*.035;
+
+const ATLAS=await (await fetch('globe-atlas.json')).json(),CBY={};ATLAS.countries.forEach(c=>CBY[c.id]=c);
+const mkIdx=(fs,idf)=>fs.map(f=>{const polys=f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.coordinates;let a=1e9,b=1e9,c=-1e9,d=-1e9;polys.forEach(p=>p[0].forEach(([x,y])=>{if(x<a)a=x;if(x>c)c=x;if(y<b)b=y;if(y>d)d=y}));return{id:idf(f),name:f.properties.name,polys,bb:[a,b,c,d]}});
+const CF=mkIdx(feats,f=>String(f.id).padStart(3,'0')),SF=mkIdx(stateFeats,f=>f.id);
+const inRing=(ring,x,y)=>{let ins=false;for(let i=0,j=ring.length-1;i<ring.length;j=i++){const xi=ring[i][0],yi=ring[i][1],xj=ring[j][0],yj=ring[j][1];if((yi>y)!==(yj>y)&&x<(xj-xi)*(y-yi)/(yj-yi)+xi)ins=!ins}return ins};
+const findIn=(list,[lat,lon])=>{for(const o of list){const bb=o.bb;if(lon<bb[0]||lon>bb[2]||lat<bb[1]||lat>bb[3])continue;for(const p of o.polys){if(inRing(p[0],lon,lat)){let hole=false;for(let k=1;k<p.length;k++)if(inRing(p[k],lon,lat)){hole=true;break}if(!hole)return o}}}return null};
+const inUS=([lat,lon])=>lat>17&&lat<72&&lon>-180&&lon<-64;
+const lv=new T.Vector3(),ray2=new T.Raycaster(),m2=new T.Vector2();
+function llAt(cx_,cy_){const b=cv.getBoundingClientRect();m2.set((cx_-b.left)/b.width*2-1,-(cy_-b.top)/b.height*2+1);ray2.setFromCamera(m2,cam);const h=ray2.intersectObject(land)[0];if(!h)return null;grp.worldToLocal(lv.copy(h.point));const R=lv.length(),a=Math.acos(Math.max(-1,Math.min(1,lv.y/R))),bb=Math.atan2(lv.z,-lv.x);let lon=bb*180/Math.PI-180;lon=((lon+540)%360)-180;return[90-a*180/Math.PI,lon]}
+let sel=null;const info=document.getElementById('info');
+const fmt=n=>n>=1e9?(n/1e9).toFixed(2)+' billion':n>=1e6?(n/1e6).toFixed(n>=1e7?0:1)+' million':Math.round(n).toLocaleString('en-US');
+const topCities=(cc,n,pred)=>ATLAS.cities.filter(c=>c[1]===cc&&(!pred||pred(c))).slice(0,n).map(c=>c[0]).join(', ');
+function showInfo(){if(!sel){info.style.display='none';return}let h='';
+ if(sel.kind==='country'){const c=sel.data;h=`<button class="x" aria-label="Close">×</button><h3>${esc(c.n)}</h3><dl>${c.cap?`<dt>Capital</dt><dd>${esc(c.cap)}</dd>`:''}${c.reg?`<dt>Region</dt><dd>${esc(c.sub||c.reg)}</dd>`:''}<dt>Area</dt><dd>${c.area.toLocaleString('en-US')} km²</dd>${c.pop?`<dt>Population</dt><dd>${fmt(c.pop)} <small style="opacity:.6">(c. 2018)</small></dd>`:''}${c.lang.length?`<dt>Languages</dt><dd>${esc(c.lang.join(', '))}</dd>`:''}${c.cur.length?`<dt>Currency</dt><dd>${esc(c.cur.join(', '))}</dd>`:''}${c.gov?`<dt>Government</dt><dd>${esc(c.gov)}</dd>`:''}${c.cc&&topCities(c.cc,3)?`<dt>Big cities</dt><dd>${esc(topCities(c.cc,3))}</dd>`:''}</dl>`}
+ else{const s=sel.data;h=`<button class="x" aria-label="Close">×</button><h3>${esc(s.n)}</h3><dl><dt>Country</dt><dd>United States</dd><dt>Area</dt><dd>${s.a.toLocaleString('en-US')} km²</dd>${s.cities?`<dt>Big cities</dt><dd>${esc(s.cities)}</dd>`:''}</dl>`}
+ info.innerHTML=h;info.style.display='block';info.querySelector('.x').onclick=()=>{sel=null;showInfo()}}
+function pickAt(x,y){if(PV)return;const ll=llAt(x,y);if(!ll){sel=null;showInfo();return}
+ const st=dist<2.6&&inUS(ll)?findIn(SF,ll):null;
+ if(st){const sd=ATLAS.states.find(s=>s.n===st.name)||{n:st.name,a:0,c:ll};const inside=ATLAS.cities.filter(c=>c[1]==='US'&&c[4]>=100000&&findIn([st],[c[2],c[3]])).slice(0,3).map(c=>c[0]).join(', ');sel={kind:'state',o:st,data:{...sd,cities:inside}};flyTo(sd.c);distT=Math.min(distT,2.0)}
+ else{const c=findIn(CF,ll);if(!c||!CBY[c.id]){sel=null;showInfo();return}const d=CBY[c.id];sel={kind:'country',o:c,data:d};flyTo(d.c);distT=Math.min(distT,d.rk<15?3.4:d.rk<60?2.6:2.0)}
+ showInfo()}
+document.getElementById('zi').onclick=()=>{distT=Math.max(DMIN,distT/1.4)};document.getElementById('zo').onclick=()=>{distT=Math.min(DMAX,distT*1.4)};
+const gc=document.getElementById('geo'),gx=gc.getContext('2d'),vv=new T.Vector3(),wc2=new T.Vector3();
+const CONT=[['NORTH AMERICA',48,-100],['SOUTH AMERICA',-14,-60],['EUROPE',52,15],['AFRICA',5,20],['ASIA',46,90],['OCEANIA',-25,135],['ANTARCTICA',-78,20]];
+const OCN=[['NORTH PACIFIC OCEAN',28,-150],['SOUTH PACIFIC OCEAN',-28,-125],['NORTH ATLANTIC OCEAN',30,-42],['SOUTH ATLANTIC OCEAN',-20,-14],['INDIAN OCEAN',-15,80],['ARCTIC OCEAN',85,0],['SOUTHERN OCEAN',-62,-95]];
+const sm=(a,b,x)=>{const t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*(3-2*t)};
+const lvlEl=document.getElementById('lvl'),wcache={};
+function drawGeo(){if(PV)return;const w=cv.clientWidth,h=cv.clientHeight,dp=Math.min(devicePixelRatio,2);if(gc.width!==Math.round(w*dp)||gc.height!==Math.round(h*dp)){gc.width=Math.round(w*dp);gc.height=Math.round(h*dp);gc.style.width=w+'px';gc.style.height=h+'px'}
+ gx.setTransform(dp,0,0,dp,0,0);gx.clearRect(0,0,w,h);grp.updateMatrixWorld(true);
+ const rects=[],horizon=1/dist;
+ function proj(lat,lon){vv.copy(ll2v(lat,lon,1.004)).applyMatrix4(grp.matrixWorld);if(vv.z<horizon+.04)return null;const fade=Math.min(1,(vv.z-horizon-.04)*5);const q=vv.clone().project(cam);return{x:(q.x+1)/2*w,y:(1-q.y)/2*h,fade}}
+ function label(text,lat,lon,font,color,alpha,o={}){const p=proj(lat,lon);if(!p||alpha<=.02)return false;gx.font=font;const key=font+text;const tw=(wcache[key]=wcache[key]||gx.measureText(text).width)+(o.dot?10:0),th=parseInt(font.match(/(\d+)px/)[1]);
+  let x=p.x-tw/2,y=p.y;if(o.dot)x=p.x+6;const r_={x:x-3,y:y-th/2-2,w:tw+6,h:th+4};if(r_.x<2||r_.x+r_.w>w-2||r_.y<2||r_.y+r_.h>h-2)return false;for(const q of rects)if(r_.x<q.x+q.w&&r_.x+r_.w>q.x&&r_.y<q.y+q.h&&r_.y+r_.h>q.y)return false;rects.push(r_);
+  gx.globalAlpha=alpha*p.fade;gx.textBaseline='middle';gx.lineWidth=3;gx.strokeStyle='rgba(2,21,11,.9)';gx.fillStyle=color;
+  if(o.dot){gx.beginPath();gx.arc(p.x,p.y,o.cap?3.4:2.4,0,6.3);if(o.cap){gx.lineWidth=1.6;gx.strokeStyle='#fff';gx.stroke()}else{gx.fillStyle='#fff';gx.fill()}gx.fillStyle=color;gx.lineWidth=3;gx.strokeStyle='rgba(2,21,11,.9)';gx.strokeText(text,x+4,y);gx.fillText(text,x+4,y)}else{if(o.ls)gx.letterSpacing=o.ls;gx.strokeText(text,x,y);gx.fillText(text,x,y);gx.letterSpacing='0px'}return true}
+ // oceans + continents (world view)
+ const wa=sm(2.5,3.6,dist)*(1-sm(6.4,7,dist)*0);
+ if(wa>0){for(const [n,la,lo] of CONT)label(n,la,lo,'700 13px Inter,system-ui,sans-serif','#d9ffd6',.8*wa,{ls:'3px'});for(const [n,la,lo] of OCN)label(n,la,lo,'italic 600 11px Inter,system-ui,sans-serif','#9fe8c0',.6*wa,{ls:'2px'})}
+ // countries
+ const lim=dist>5.2?0:dist>4.4?22:dist>3.6?55:dist>2.9?110:dist>2.3?170:241,ca=sm(5.4,4.6,dist);
+ const cfs=dist<2.2?13:12;
+ if(lim>0)for(const c of ATLAS.countries){if(c.rk>=lim)continue;const big=c.rk<25;label(c.n,c.c[0],c.c[1],`${big?700:600} ${big?cfs+1:cfs-1}px Inter,system-ui,sans-serif`,'#ffffff',(dist<2.6&&c.rk>60?.8:1)*Math.max(ca,dist<4.6?1:0),{})}
+ // US states
+ if(dist<2.7){const sa=sm(2.7,2.3,dist);for(const s of ATLAS.states.slice().sort((a,b)=>b.a-a.a))label(s.n,s.c[0],s.c[1],'600 10px Inter,system-ui,sans-serif','#ffe9a8',.9*sa,{ls:'1px'})}
+ // cities
+ const cm=dist>3.1?1e99:dist>2.6?8e6:dist>2.2?3e6:dist>1.8?1e6:dist>1.55?4e5:0;
+ if(dist<=3.1)for(const c of ATLAS.cities){if(c[4]<cm&&!(c[5]&&c[4]>=(dist>2.2?3e6:dist>1.8?1.2e6:dist>1.55?4e5:0)))continue;label(c[0],c[2],c[3],'500 10.5px Inter,system-ui,sans-serif','#e9fff0',.95,{dot:1,cap:c[5]})}
+ // selection outline
+ if(sel){gx.globalAlpha=1;gx.strokeStyle='#ffd24a';gx.lineWidth=2;gx.lineJoin='round';for(const p of sel.o.polys)for(let k=0;k<p.length;k++){const ring=p[k];gx.beginPath();let pen=false;for(const [lo,la] of ring){const q=proj(la,lo);if(!q){pen=false;continue}if(pen)gx.lineTo(q.x,q.y);else{gx.moveTo(q.x,q.y);pen=true}}gx.stroke()}}
+ gx.globalAlpha=1;
+ stMat.opacity=sm(3.0,2.2,dist)*.85;
+ lvlEl.textContent=dist>4.3?'World':dist>2.7?'Countries':dist>1.95?'States & regions':'Cities'}
+(function loop(t){const f=(t||0)*.001;grp.position.y=Math.sin(f*1.1)*.035;dist+=(distT-dist)*.14;cam.position.z=dist;const ps=Math.max(.45,dist/4.1);pinMeshes.forEach(m=>m.scale.setScalar(ps*(m.userData.y?1:1)));
  if(grp.userData.fy!=null&&!drag){grp.rotation.y+=(grp.userData.fy-grp.rotation.y)*.06;grp.rotation.x+=(grp.userData.fx-grp.rotation.x)*.06;if(Math.abs(grp.userData.fy-grp.rotation.y)<.002)grp.userData.fy=null}
- else if(!drag)grp.rotation.y+=vy;
- r.render(scene,cam);placeLabels();requestAnimationFrame(loop)})();
+ else if(!drag&&dist>3.4&&!sel)grp.rotation.y+=vy*zf();
+ r.render(scene,cam);placeLabels();drawGeo();requestAnimationFrame(loop)})();
 </script></body></html>
