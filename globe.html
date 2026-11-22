@@ -3,7 +3,7 @@
 <style>
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 35%,#0a4a2c,#02150b 75%);color:#e9fff0;font-family:Inter,system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
 h1{margin:18px 0 0;text-align:center;font-size:1.1rem;letter-spacing:.12em;text-transform:uppercase;color:#62d860}
-#stage{position:relative;height:70vh;min-height:380px}canvas{display:block;width:100%;height:100%;cursor:grab}
+#stage{position:relative;height:70vh;min-height:380px;display:flex}#cvw{position:relative;flex:1;min-width:0;height:100%}canvas{display:block;width:100%;height:100%;cursor:grab}
 #ctl{max-width:720px;margin:0 auto;padding:0 18px 30px;text-align:center}
 #yr{width:230px;font:800 3.4rem/1 Inter,system-ui,sans-serif;background:transparent;color:#62d860;border:0;border-bottom:2px solid #62d860;text-align:center;outline:0;-moz-appearance:textfield}
 #yr::-webkit-inner-spin-button{display:none}
@@ -22,13 +22,17 @@ body.pv #ctl,body.pv h1{display:none}body.pv{overflow:hidden}body.pv #stage{heig
 #ui{position:absolute;right:12px;top:12px;display:flex;flex-direction:column;gap:6px;align-items:flex-end;z-index:3}#ui button{width:38px;height:38px;border-radius:10px;border:1px solid #62d860;background:#02150bcc;color:#e9fff0;font-size:1.3rem;cursor:pointer}#ui button:hover{background:#0e3b24}
 #lvl{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:#62d860;background:#02150bcc;border:1px solid #62d86088;border-radius:8px;padding:3px 8px}
 #info{position:absolute;left:12px;top:12px;max-width:260px;background:#02150bee;border:1px solid #62d860;border-radius:12px;padding:12px 14px;font-size:.8rem;line-height:1.4;z-index:4;text-align:left}#info h3{margin:0 0 6px;font-size:1rem;color:#fff;padding-right:20px}#info dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:2px 10px}#info dt{opacity:.65}#info dd{margin:0}#info .x{position:absolute;right:8px;top:6px;background:none;border:0;color:#e9fff0;font-size:1.1rem;cursor:pointer}
-body.pv #geo,body.pv #ui,body.pv #info{display:none!important}
+body.pv #geo,body.pv #ui,body.pv #info,body.pv #evp{display:none!important}
+#evp{width:330px;flex:none;overflow-y:auto;background:#02150bee;border-right:1px solid #62d86088;padding:10px 10px 18px;text-align:left;z-index:4}
+#evp h2{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:#62d860;margin:2px 0 8px}
+.it{background:#0c3a23;border-radius:10px;padding:8px 10px;margin-bottom:6px;cursor:pointer;border:1px solid transparent;font-size:.82rem}.it:hover{border-color:#62d86088}.it.on{border-color:#62d860;background:#0f4a2c}.it b{display:block}.it small{opacity:.7}.it .d{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px}.it .bd{display:none;margin-top:6px}.it.on .bd{display:block}.it .bd p{margin:4px 0 6px}
+@media(max-width:700px){#stage{flex-direction:column-reverse;height:auto}#cvw{height:55vh;flex:none}#evp{width:auto;max-height:38vh;border-right:0;border-top:1px solid #62d86088}}
 body.pv{background:radial-gradient(ellipse at 50% 45%,#0f6a3c,#02150b 78%)}
 @media(max-width:600px){#info{max-width:190px;font-size:.72rem}}
 </style></head><body>
 <script>if(/[?&]preview=1/.test(location.search))document.documentElement.className=document.body.className="pv"</script>
 <h1 id="h">The Icosahedron Effect · Globe timeline</h1><script>if(top!==self)document.getElementById("h").style.display="none"</script>
-<div id="stage"><canvas id="c"></canvas><canvas id="geo"></canvas><div id="tip"></div><div id="ui"><button id="zi" aria-label="Zoom in">+</button><button id="zo" aria-label="Zoom out">−</button><div id="lvl"></div></div><div id="info" style="display:none"></div></div>
+<div id="stage"><div id="evp"></div><div id="cvw"><canvas id="c"></canvas><canvas id="geo"></canvas><div id="tip"></div><div id="ui"><button id="zi" aria-label="Zoom in">+</button><button id="zo" aria-label="Zoom out">−</button><div id="lvl"></div></div><div id="info" style="display:none"></div></div></div>
 <div id="ctl">
 <div class="row"><button class="st" id="prev" aria-label="Previous decade">‹</button><input id="yr" type="text" inputmode="numeric" value="1990s" aria-label="Decade" maxlength="5"><button class="st" id="next" aria-label="Next decade">›</button></div>
 <div class="sub" id="era"></div><div class="sub" id="zh" style="font-size:.8rem;opacity:.6">Scroll or pinch to zoom · click a country or state for facts</div><div class="sub" id="leg"><span style="color:#fff">●</span> Event &nbsp; <span style="color:#ffd24a">●</span> Group &nbsp; <span style="color:#ff8a5c">●</span> Person</div><div id="src"></div><div id="atl" class="note" style="font-size:.72rem;opacity:.65;text-align:left;margin-top:8px">Atlas layer: country shapes from Natural Earth via world-atlas (public domain); U.S. state shapes from the U.S. Census Bureau via us-atlas; country facts from mledoze/countries (ODbL 1.0); populations from country-json (approximate, c. 2018); cities from GeoNames (CC BY 4.0) via all-the-cities. Borders are modern.</div>
@@ -84,12 +88,15 @@ const yr=document.getElementById('yr'),stage=document.getElementById('stage'),er
 let dec=1990,labels=[];const near=d=>DECS.reduce((b,x)=>Math.abs(x-d)<Math.abs(b-d)?x:b,DECS[0]);
 const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function step(k){const i=DECS.indexOf(dec)+k;setDec(DECS[Math.max(0,Math.min(DECS.length-1,i))])}
+const evp=document.getElementById('evp');let selPin=-1;
+const hex=n=>'#'+(n||0xffffff).toString(16).padStart(6,'0');
+if(!PV){evp.innerHTML='<h2>Timeline \u00b7 '+PINS.length+' entries</h2>'+PINS.map((p,i)=>`<div class="it" id="it${i}" data-i="${i}"><b><span class="d" style="background:${hex(COL[p.tag])}"></span>${esc(p.t)}</b><small>${esc(p.d)}${p.p?" \u00b7 "+esc(p.p):""}</small><div class="bd"><p>${esc(p.x)}</p>${p.who?`<div class="cit">${esc(p.who)}</div>`:''}${p.pin?`<div class="cit">Pin: ${esc(p.pin)}</div>`:''}${p.s.map(q=>`<div class="cit">${esc(q.c)} <a href="${q.u}" target="_blank" rel="noopener">link</a></div>`).join('')}</div></div>`).join('')+'<p class="note">Entries are Dri\u2019s research notes; the sources listed support them (accessed November 22, 2026). Country borders shown are modern.</p>';
+ evp.addEventListener('click',e=>{if(e.target.closest('a'))return;const it=e.target.closest('.it');if(it)selectPin(+it.dataset.i,true)})}
+function selectPin(i,fromList){selPin=(fromList&&selPin===i)?-1:i;document.querySelectorAll('.it.on').forEach(x=>x.classList.remove('on'));if(selPin<0)return;const it=document.getElementById('it'+i);it.classList.add('on');const p=PINS[i];sel=null;showInfo();flyTo(p.ll);distT=Math.min(distT,2.4);if(!fromList)evp.scrollTo({top:it.offsetTop-evp.offsetTop-6,behavior:'smooth'})}
 function setDec(d){d=near(Math.floor((+d||dec)/10)*10);dec=d;yr.value=d+'s';
- const now=PINS.filter(p=>p.y>=d&&p.y<d+10);era.textContent=now.length+(now.length===1?' event':' events')+' pinned';
- pinMeshes.forEach(m=>{m.visible=m.userData.y>=d&&m.userData.y<d+10});
- labels.forEach(l=>l.el.remove());
- labels=now.map(p=>{const el=document.createElement('div');el.className='lab';el.innerHTML=`<b>${esc(p.t)}</b><small>${esc(p.d)}${p.p?" · "+esc(p.p):""}</small><span class="more">${esc(p.x)}</span>`;stage.append(el);return {p,el}});
- srcBox.innerHTML='<h2>Sources, '+d+'s</h2>'+now.map(p=>`<div class="ev"><b>${esc(p.t)}</b> <small>${esc(p.d)} · ${esc(p.tag)}</small>${p.who?`<div class="cit">${esc(p.who)}</div>`:""}<p>${esc(p.x)}</p>${p.pin?`<div class="cit">Pin: ${esc(p.pin)}</div>`:""}`+p.s.map(q=>`<div class="cit">${esc(q.c)} <a href="${q.u}" target="_blank" rel="noopener">${esc(q.u)}</a></div>`).join('')+'</div>').join('')+'<p class="note">Entries are Dri\u2019s research notes; the sources listed support them (accessed November 22, 2026). Wikipedia text is licensed CC BY-SA 4.0 (creativecommons.org/licenses/by-sa/4.0/); other sources are linked for reference. Country borders shown are modern.</p>';
+ const now=PINS.filter(p=>p.y>=d&&p.y<d+10);era.textContent=PV?now.length+(now.length===1?' event':' events')+' pinned':now.length+(now.length===1?' entry':' entries')+' in the '+d+'s · '+PINS.length+' pinned in all';
+ pinMeshes.forEach(m=>{m.visible=PV?(m.userData.y>=d&&m.userData.y<d+10):true});
+ if(!PV){const it=document.getElementById('it'+PINS.indexOf(now[0]));if(it&&evp)evp.scrollTo({top:it.offsetTop-evp.offsetTop-6,behavior:'smooth'})}
  if(now.length){let la=0,lo=0;now.forEach(p=>{la+=p.ll[0];lo+=p.ll[1]});flyTo([la/now.length,lo/now.length]);distT=Math.min(distT,3.6)}}
 function commit(){setDec(yr.value.replace(/\D/g,'').slice(0,4))}
 yr.addEventListener('focus',()=>yr.select());yr.addEventListener('change',commit);yr.addEventListener('keydown',e=>{if(e.key==='Enter'){commit();yr.blur()}});
@@ -120,7 +127,8 @@ function showInfo(){if(!sel){info.style.display='none';return}let h='';
  if(sel.kind==='country'){const c=sel.data;h=`<button class="x" aria-label="Close">×</button><h3>${esc(c.n)}</h3><dl>${c.cap?`<dt>Capital</dt><dd>${esc(c.cap)}</dd>`:''}${c.reg?`<dt>Region</dt><dd>${esc(c.sub||c.reg)}</dd>`:''}<dt>Area</dt><dd>${c.area.toLocaleString('en-US')} km²</dd>${c.pop?`<dt>Population</dt><dd>${fmt(c.pop)} <small style="opacity:.6">(c. 2018)</small></dd>`:''}${c.lang.length?`<dt>Languages</dt><dd>${esc(c.lang.join(', '))}</dd>`:''}${c.cur.length?`<dt>Currency</dt><dd>${esc(c.cur.join(', '))}</dd>`:''}${c.gov?`<dt>Government</dt><dd>${esc(c.gov)}</dd>`:''}${c.cc&&topCities(c.cc,3)?`<dt>Big cities</dt><dd>${esc(topCities(c.cc,3))}</dd>`:''}</dl>`}
  else{const s=sel.data;h=`<button class="x" aria-label="Close">×</button><h3>${esc(s.n)}</h3><dl><dt>Country</dt><dd>United States</dd><dt>Area</dt><dd>${s.a.toLocaleString('en-US')} km²</dd>${s.cities?`<dt>Big cities</dt><dd>${esc(s.cities)}</dd>`:''}</dl>`}
  info.innerHTML=h;info.style.display='block';info.querySelector('.x').onclick=()=>{sel=null;showInfo()}}
-function pickAt(x,y){if(PV)return;const ll=llAt(x,y);if(!ll){sel=null;showInfo();return}
+function pinAt(x,y){const b=cv.getBoundingClientRect();mv.set((x-b.left)/b.width*2-1,-(y-b.top)/b.height*2+1);ray.setFromCamera(mv,cam);const h=ray.intersectObjects(pinMeshes.filter(m=>m.visible))[0];if(!h)return -1;h.object.getWorldPosition(wp);return wp.z>0.12?pinMeshes.indexOf(h.object):-1}
+function pickAt(x,y){if(PV)return;const pi=pinAt(x,y);if(pi>=0){selectPin(pi,false);return}const ll=llAt(x,y);if(!ll){sel=null;showInfo();return}
  const st=dist<2.6&&inUS(ll)?findIn(SF,ll):null;
  if(st){const sd=ATLAS.states.find(s=>s.n===st.name)||{n:st.name,a:0,c:ll};const inside=ATLAS.cities.filter(c=>c[1]==='US'&&c[4]>=100000&&findIn([st],[c[2],c[3]])).slice(0,3).map(c=>c[0]).join(', ');sel={kind:'state',o:st,data:{...sd,cities:inside}};flyTo(sd.c);distT=Math.min(distT,2.0)}
  else{const c=findIn(CF,ll);if(!c||!CBY[c.id]){sel=null;showInfo();return}const d=CBY[c.id];sel={kind:'country',o:c,data:d};flyTo(d.c);distT=Math.min(distT,d.rk<15?3.4:d.rk<60?2.6:2.0)}
@@ -157,7 +165,7 @@ function drawGeo(){if(PV)return;const w=cv.clientWidth,h=cv.clientHeight,dp=Math
  stMat.opacity=sm(3.0,2.2,dist)*.85;
  lvlEl.textContent=dist>4.3?'World':dist>2.7?'Countries':dist>1.95?'States & regions':'Cities'}
 let _pz=false,_lt=0;addEventListener('message',e=>{if(e.data&&e.data.pz!==undefined){const was=_pz;_pz=!!e.data.pz;if(was&&!_pz)requestAnimationFrame(loop)}});
-(function loop(t){if(_pz)return;if(PV){if(t-_lt<33){requestAnimationFrame(loop);return}_lt=t}const f=(t||0)*.001;grp.position.y=PV?Math.sin(f*1.1)*.035:0;dist+=(distT-dist)*.14;cam.position.z=dist;const ps=Math.max(.14,Math.pow(dist/4.1,1.4));pinMeshes.forEach(m=>m.scale.setScalar(ps*(m.userData.y?1:1)));
+(function loop(t){if(_pz)return;if(PV){if(t-_lt<33){requestAnimationFrame(loop);return}_lt=t}const f=(t||0)*.001;grp.position.y=PV?Math.sin(f*1.1)*.035:0;dist+=(distT-dist)*.14;cam.position.z=dist;const ps=Math.max(.14,Math.pow(dist/4.1,1.4));pinMeshes.forEach((m,i)=>m.scale.setScalar(ps*(i===selPin?2.2:1)));
  if(grp.userData.fy!=null&&!drag){grp.rotation.y+=(grp.userData.fy-grp.rotation.y)*.06;grp.rotation.x+=(grp.userData.fx-grp.rotation.x)*.06;if(Math.abs(grp.userData.fy-grp.rotation.y)<.002)grp.userData.fy=null}
  else if(PV&&!drag&&dist>3.4&&!sel)grp.rotation.y+=vy*zf();
  r.render(scene,cam);placeLabels();drawGeo();requestAnimationFrame(loop)})();
