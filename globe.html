@@ -3,7 +3,7 @@
 <style>
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 35%,#0a4a2c,#02150b 75%);color:#e9fff0;font-family:Inter,system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
 h1{margin:18px 0 0;text-align:center;font-size:1.1rem;letter-spacing:.12em;text-transform:uppercase;color:#62d860}
-#stage{position:relative;height:56vh;min-height:330px}canvas{display:block;width:100%;height:100%;cursor:grab}
+#stage{position:relative;height:70vh;min-height:380px}canvas{display:block;width:100%;height:100%;cursor:grab}
 #ctl{max-width:720px;margin:0 auto;padding:0 18px 30px;text-align:center}
 #yr{width:190px;font:800 3.4rem/1 Inter,system-ui,sans-serif;background:transparent;color:#62d860;border:0;border-bottom:2px solid #62d860;text-align:center;outline:0;-moz-appearance:textfield}
 #yr::-webkit-inner-spin-button{display:none}
@@ -14,26 +14,26 @@ h1{margin:18px 0 0;text-align:center;font-size:1.1rem;letter-spacing:.12em;text-
 .chips button:hover{opacity:1;color:#62d860}.chips button.on{opacity:1;color:#62d860;border-bottom-color:#62d860}
 #ev{text-align:left;display:grid;gap:8px}
 .card{background:#0c3a23;border-radius:12px;padding:10px 14px}.card b{display:block}.card small{opacity:.75}
-.none{opacity:.6;text-align:center}
+.lab{position:absolute;max-width:230px;background:#02150bdd;border:1px solid #62d860;border-radius:10px;padding:8px 11px;font-size:.8rem;line-height:1.35;pointer-events:none;transform:translate(14px,-50%)}.lab b{display:block;font-size:.9rem;color:#fff}.lab small{display:block;opacity:.75;margin-bottom:3px}.lab span{opacity:.92}
 #tip{position:absolute;pointer-events:none;background:#02150bcc;border:1px solid #62d860;border-radius:8px;padding:4px 9px;font-size:.8rem;display:none;white-space:nowrap}
 </style></head><body>
 <h1 id="h">The Icosahedron Effect · Globe timeline</h1><script>if(top!==self)document.getElementById("h").style.display="none"</script>
 <div id="stage"><canvas id="c"></canvas><div id="tip"></div></div>
 <div id="ctl">
 <div class="row"><button class="st" id="prev" aria-label="Previous year">‹</button><input id="yr" type="number" min="100" max="2026" value="1995" aria-label="Year"><button class="st" id="next" aria-label="Next year">›</button></div>
-<div class="sub" id="era"></div>
-<div class="lbl">Century</div><div class="chips" id="chips"></div><div class="lbl">Decade</div><div class="chips sq" id="decs"></div><div class="lbl">Year</div><div class="chips sq" id="yrs"></div>
-<div id="ev"></div>
+<div class="sub" id="era"></div><div class="sub" id="hint" style="display:none">Nothing of yours is pinned in this year yet. Earlier pins stay on the globe.</div>
+
+
 </div>
 <script src="vendor/topojson-client.min.js"></script>
 <script type="module">
 import * as T from './vendor/three.module.min.js';
 const PINS=[
 {y:1856,t:"Pottawatomie massacre",p:"Franklin County, Kansas",ll:[38.55,-95.25]},
-{y:1859,t:"Raid on Harpers Ferry",p:"Harpers Ferry, Virginia",ll:[39.32,-77.73]},
+{y:1859,t:"Raid on Harpers Ferry",p:"Harpers Ferry, Virginia",x:"John Brown led a raid on the federal armory.",ll:[39.32,-77.73]},
 {y:1865,t:"Ku Klux Klan formed",p:"Pulaski, Tennessee",ll:[35.2,-87.03]},
-{y:1920,t:"Wall Street bombing",p:"New York City",ll:[40.71,-74.01]},
-{y:1995,t:"Oklahoma City bombing",p:"Oklahoma City, Oklahoma",ll:[35.47,-97.52]},
+{y:1920,t:"Wall Street bombing",p:"New York City",x:"An explosion that killed 38 people.",ll:[40.71,-74.01]},
+{y:1995,t:"Oklahoma City bombing",p:"Oklahoma City, Oklahoma",x:"Domestic terrorist attack on the Alfred P. Murrah Federal Building.",ll:[35.47,-97.52]},
 {y:1996,t:"Centennial Olympic Park bombing",p:"Atlanta, Georgia",ll:[33.76,-84.39]},
 {y:1975,t:"J. Edgar Hoover Building opens",p:"Washington, D.C.",ll:[38.894,-77.025]},
 ];
@@ -69,20 +69,12 @@ cv.addEventListener('pointerdown',e=>{drag=true;lx=e.clientX;ly=e.clientY;cv.sty
 addEventListener('pointerup',()=>{drag=false;cv.style.cursor='grab'});
 addEventListener('pointermove',e=>{if(drag){grp.rotation.y+=(e.clientX-lx)*.006;grp.rotation.x=Math.max(-1.2,Math.min(1.2,grp.rotation.x+(e.clientY-ly)*.006));lx=e.clientX;ly=e.clientY}});
 function flyTo(ll){const tgt=Math.PI/2-(ll[1]+180)*Math.PI/180;let d=((tgt-grp.rotation.y)%(2*Math.PI)+3*Math.PI)%(2*Math.PI)-Math.PI;grp.userData.fy=grp.rotation.y+d;grp.userData.fx=ll[0]*Math.PI/180*.8}
-const yr=document.getElementById('yr'),ev=document.getElementById('ev'),era=document.getElementById('era'),chips=document.getElementById('chips'),decs=document.getElementById('decs'),yrs=document.getElementById('yrs');
-let year=1995;const MAX=2026;
-const mk=(box,items,cur,fn)=>{box.innerHTML='';items.forEach(([v,l])=>{const b=document.createElement('button');b.textContent=l;if(v===cur)b.className='on';b.onclick=()=>fn(v);box.append(b)})};
+const yr=document.getElementById('yr'),stage=document.getElementById('stage'),hint=document.getElementById('hint'),era=document.getElementById('era');
+let year=1995,labels=[];const MAX=2026;
 function setYear(y){y=Math.max(100,Math.min(MAX,Math.round(y)||year));year=y;yr.value=y;era.textContent=eraOf(y);
- const c=Math.floor(y/100)*100,d=Math.floor(y/10)*10;
- const cs=[];for(let k=100;k<=2000;k+=100)cs.push([k,k+'s']);
- mk(chips,cs,c,k=>setYear(Math.min(MAX,k+(year%100))));
- const ds=[];for(let k=c;k<c+100&&k<=MAX;k+=10)ds.push([k,k+'s']);
- mk(decs,ds,d,k=>setYear(Math.min(MAX,k+(year%10))));
- const ys=[];for(let k=d;k<d+10&&k<=MAX;k++)ys.push([k,String(k)]);
- mk(yrs,ys,y,k=>setYear(k));
  const now=PINS.filter(p=>p.y===y);
  pinMeshes.forEach(m=>{const p=m.userData,on=p.y===y;m.visible=p.y<=y;m.material.color.set(on?0xffffff:0x62d860);m.scale.setScalar(on?1.8:.8)});
- ev.innerHTML=now.length?now.map(p=>`<div class="card"><b>${p.t}</b><small>${y} · ${p.p}</small></div>`).join(''):`<div class="none">No entries of yours in ${y} yet. Pins from earlier years stay on the globe.</div>`;
+ labels.forEach(l=>l.el.style.display='none');labels=now.map(p=>{const el=document.createElement('div');el.className='lab';el.innerHTML=`<b>${p.t}</b><small>${p.y} · ${p.p}</small>${p.x?`<span>${p.x}</span>`:''}`;stage.append(el);return {p,el}});hint.style.display=now.length?'none':'block';
  if(now[0])flyTo(now[0].ll)}
 yr.addEventListener('change',()=>setYear(+yr.value));yr.addEventListener('keydown',e=>{if(e.key==='Enter')setYear(+yr.value)});
 document.getElementById('prev').onclick=()=>setYear(year-1);document.getElementById('next').onclick=()=>setYear(year+1);
@@ -90,8 +82,10 @@ addEventListener('keydown',e=>{if(document.activeElement===yr)return;if(e.key===
 setYear(1995);
 const ray=new T.Raycaster(),mv=new T.Vector2();
 cv.addEventListener('pointermove',e=>{const b=cv.getBoundingClientRect();mv.set((e.clientX-b.left)/b.width*2-1,-(e.clientY-b.top)/b.height*2+1);ray.setFromCamera(mv,cam);const h=ray.intersectObjects(pinMeshes.filter(m=>m.visible))[0];if(h){tip.style.display='block';tip.style.left=e.clientX-b.left+12+'px';tip.style.top=e.clientY-b.top+12+'px';tip.textContent=h.object.userData.t+' · '+h.object.userData.y}else tip.style.display='none'});
+const wp=new T.Vector3();
+function placeLabels(){const w=cv.clientWidth,h=cv.clientHeight;for(const {p,el} of labels){const m=pinMeshes.find(m=>m.userData===p);m.getWorldPosition(wp);const vis=wp.z>0.12;el.style.display=vis?'block':'none';if(!vis)continue;const v=wp.clone().project(cam);let x=(v.x+1)/2*w,y=(1-v.y)/2*h;const flip=x>w-260;el.style.left=x+'px';el.style.top=y+'px';el.style.transform=flip?'translate(calc(-100% - 14px),-50%)':'translate(14px,-50%)'}}
 (function loop(t){const f=(t||0)*.001;grp.position.y=Math.sin(f*1.1)*.035;
  if(grp.userData.fy!=null&&!drag){grp.rotation.y+=(grp.userData.fy-grp.rotation.y)*.06;grp.rotation.x+=(grp.userData.fx-grp.rotation.x)*.06;if(Math.abs(grp.userData.fy-grp.rotation.y)<.002)grp.userData.fy=null}
  else if(!drag)grp.rotation.y+=vy;
- r.render(scene,cam);requestAnimationFrame(loop)})();
+ r.render(scene,cam);placeLabels();requestAnimationFrame(loop)})();
 </script></body></html>
