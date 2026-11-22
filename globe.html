@@ -22,7 +22,7 @@ h1{margin:18px 0 0;text-align:center;font-size:1.1rem;letter-spacing:.12em;text-
 <div id="stage"><canvas id="c"></canvas><div id="tip"></div></div>
 <div id="ctl">
 <div class="row"><button class="st" id="prev" aria-label="Previous decade">‹</button><input id="yr" type="text" inputmode="numeric" value="1990s" aria-label="Decade" maxlength="5"><button class="st" id="next" aria-label="Next decade">›</button></div>
-<div class="sub" id="era"></div><div id="src"></div>
+<div class="sub" id="era"></div><div class="sub" id="leg"><span style="color:#fff">●</span> Event &nbsp; <span style="color:#ffd24a">●</span> Group &nbsp; <span style="color:#ff8a5c">●</span> Person</div><div id="src"></div>
 
 
 </div>
@@ -30,7 +30,7 @@ h1{margin:18px 0 0;text-align:center;font-size:1.1rem;letter-spacing:.12em;text-
 <script type="module">
 import * as T from './vendor/three.module.min.js';
 const DATA=await (await fetch("globe-events.json")).json();const PINS=DATA;
-const MIN=1900,MAXD=2020;
+const DECS=[...new Set(PINS.map(p=>Math.floor(p.y/10)*10))].sort((a,b)=>a-b);const COL={Event:0xffffff,Group:0xffd24a,Person:0xff8a5c};
 const cv=document.getElementById('c'),tip=document.getElementById('tip');
 const r=new T.WebGLRenderer({canvas:cv,antialias:true,alpha:true});r.setPixelRatio(Math.min(devicePixelRatio,2));
 const scene=new T.Scene(),cam=new T.PerspectiveCamera(36,1,.1,50);cam.position.set(0,0,4.1);
@@ -53,7 +53,7 @@ feats.forEach(f=>{const ps=f.geometry.type==='Polygon'?[f.geometry.coordinates]:
 const tx=new T.CanvasTexture(cx);tx.anisotropy=8;tx.colorSpace=T.SRGBColorSpace;
 grp.add(new T.Mesh(new T.SphereGeometry(1.003,96,64),new T.MeshBasicMaterial({map:tx})));
 const pinMeshes=[];
-PINS.forEach(p=>{const m=new T.Mesh(new T.SphereGeometry(.03,12,8),new T.MeshBasicMaterial({color:0xffffff}));m.position.copy(ll2v(p.ll[0],p.ll[1],1.02));m.userData=p;m.visible=false;grp.add(m);pinMeshes.push(m)});
+PINS.forEach(p=>{const m=new T.Mesh(new T.SphereGeometry(.03,12,8),new T.MeshBasicMaterial({color:COL[p.tag]||0xffffff}));m.position.copy(ll2v(p.ll[0],p.ll[1],1.02));m.userData=p;m.visible=false;grp.add(m);pinMeshes.push(m)});
 grp.rotation.y=-1.0;grp.rotation.x=.3;
 function size(){const w=cv.clientWidth,h=cv.clientHeight;r.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()}addEventListener('resize',size);size();
 let drag=false,lx=0,ly=0,vy=.0016,t0=0;
@@ -62,25 +62,26 @@ addEventListener('pointerup',()=>{drag=false;cv.style.cursor='grab'});
 addEventListener('pointermove',e=>{if(drag){grp.rotation.y+=(e.clientX-lx)*.006;grp.rotation.x=Math.max(-1.2,Math.min(1.2,grp.rotation.x+(e.clientY-ly)*.006));lx=e.clientX;ly=e.clientY}});
 function flyTo(ll){const tgt=Math.PI/2-(ll[1]+180)*Math.PI/180;let d=((tgt-grp.rotation.y)%(2*Math.PI)+3*Math.PI)%(2*Math.PI)-Math.PI;grp.userData.fy=grp.rotation.y+d;grp.userData.fx=ll[0]*Math.PI/180*.8}
 const yr=document.getElementById('yr'),stage=document.getElementById('stage'),era=document.getElementById('era'),srcBox=document.getElementById('src');
-let dec=1990,labels=[];
+let dec=1990,labels=[];const near=d=>DECS.reduce((b,x)=>Math.abs(x-d)<Math.abs(b-d)?x:b,DECS[0]);
 const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-function setDec(d){d=Math.floor((+d||dec)/10)*10;d=Math.max(MIN,Math.min(MAXD,d));dec=d;yr.value=d+'s';
+function step(k){const i=DECS.indexOf(dec)+k;setDec(DECS[Math.max(0,Math.min(DECS.length-1,i))])}
+function setDec(d){d=near(Math.floor((+d||dec)/10)*10);dec=d;yr.value=d+'s';
  const now=PINS.filter(p=>p.y>=d&&p.y<d+10);era.textContent=now.length+(now.length===1?' event':' events')+' pinned';
  pinMeshes.forEach(m=>{m.visible=m.userData.y>=d&&m.userData.y<d+10});
  labels.forEach(l=>l.el.remove());
- labels=now.map(p=>{const el=document.createElement('div');el.className='lab';el.innerHTML=`<b>${esc(p.t)}</b><small>${esc(p.d)} · ${esc(p.p)}</small><span class="more">${esc(p.x)}</span>`;stage.append(el);return {p,el}});
- srcBox.innerHTML='<h2>Sources, '+d+'s</h2>'+now.map(p=>`<div class="ev"><b>${esc(p.t)}</b> <small>${esc(p.d)}</small><p>${esc(p.x)}</p>`+p.s.map(q=>`<div class="cit">${esc(q.c)} <a href="${q.u}" target="_blank" rel="noopener">${esc(q.u)}</a></div>`).join('')+'</div>').join('')+'<p class="note">Summaries are paraphrased by Dri\u2019s research assistant from the sources listed (accessed November 21, 2026). Wikipedia text is licensed CC BY-SA 4.0 (creativecommons.org/licenses/by-sa/4.0/); other sources are linked for reference. Country borders shown are modern.</p>';
+ labels=now.map(p=>{const el=document.createElement('div');el.className='lab';el.innerHTML=`<b>${esc(p.t)}</b><small>${esc(p.d)}${p.p?" · "+esc(p.p):""}</small><span class="more">${esc(p.x)}</span>`;stage.append(el);return {p,el}});
+ srcBox.innerHTML='<h2>Sources, '+d+'s</h2>'+now.map(p=>`<div class="ev"><b>${esc(p.t)}</b> <small>${esc(p.d)} · ${esc(p.tag)}</small>${p.who?`<div class="cit">${esc(p.who)}</div>`:""}<p>${esc(p.x)}</p>${p.pin?`<div class="cit">Pin: ${esc(p.pin)}</div>`:""}`+p.s.map(q=>`<div class="cit">${esc(q.c)} <a href="${q.u}" target="_blank" rel="noopener">${esc(q.u)}</a></div>`).join('')+'</div>').join('')+'<p class="note">Entries are Dri\u2019s research notes; the sources listed support them (accessed November 22, 2026). Wikipedia text is licensed CC BY-SA 4.0 (creativecommons.org/licenses/by-sa/4.0/); other sources are linked for reference. Country borders shown are modern.</p>';
  if(now.length){let la=0,lo=0;now.forEach(p=>{la+=p.ll[0];lo+=p.ll[1]});flyTo([la/now.length,lo/now.length])}}
 function commit(){setDec(yr.value.replace(/\D/g,'').slice(0,4))}
 yr.addEventListener('focus',()=>yr.select());yr.addEventListener('change',commit);yr.addEventListener('keydown',e=>{if(e.key==='Enter'){commit();yr.blur()}});
-document.getElementById('prev').onclick=()=>setDec(dec-10);document.getElementById('next').onclick=()=>setDec(dec+10);
-addEventListener('keydown',e=>{if(document.activeElement===yr)return;if(e.key==='ArrowLeft')setDec(dec-10);if(e.key==='ArrowRight')setDec(dec+10)});
+document.getElementById('prev').onclick=()=>step(-1);document.getElementById('next').onclick=()=>step(1);
+addEventListener('keydown',e=>{if(document.activeElement===yr)return;if(e.key==='ArrowLeft')step(-1);if(e.key==='ArrowRight')step(1)});
 setDec(1990);
 const ray=new T.Raycaster(),mv=new T.Vector2();
 cv.addEventListener('pointermove',e=>{const b=cv.getBoundingClientRect();mv.set((e.clientX-b.left)/b.width*2-1,-(e.clientY-b.top)/b.height*2+1);ray.setFromCamera(mv,cam);const h=ray.intersectObjects(pinMeshes.filter(m=>m.visible))[0];if(h){tip.style.display='block';tip.style.left=e.clientX-b.left+12+'px';tip.style.top=e.clientY-b.top+12+'px';tip.textContent=h.object.userData.t+' · '+h.object.userData.y}else tip.style.display='none'});
 const wp=new T.Vector3();
 function placeLabels(){const w=cv.clientWidth,h=cv.clientHeight,vs=[];for(const o of labels){const m=pinMeshes.find(m=>m.userData===o.p);m.getWorldPosition(wp);const vis=wp.z>0.12;o.el.style.display=vis?'block':'none';if(!vis)continue;const v=wp.clone().project(cam);o.x=(v.x+1)/2*w;o.y=(1-v.y)/2*h;o.ly=o.y;vs.push(o)}
- vs.sort((a,b)=>a.y-b.y);let last=-1e9;for(const o of vs){o.ly=Math.max(o.y,last+54);last=o.ly}
+ vs.sort((a,b)=>a.y-b.y);let last=-1e9;for(const o of vs){const hh=o.el.offsetHeight||50;o.ly=Math.max(o.y,last+hh/2+8);last=o.ly+hh/2}
  for(const o of vs){const flip=o.x>w-250;o.el.style.left=o.x+'px';o.el.style.top=o.ly+'px';o.el.style.transform=flip?'translate(calc(-100% - 14px),-50%)':'translate(14px,-50%)'}}
 (function loop(t){const f=(t||0)*.001;grp.position.y=Math.sin(f*1.1)*.035;
  if(grp.userData.fy!=null&&!drag){grp.rotation.y+=(grp.userData.fy-grp.rotation.y)*.06;grp.rotation.x+=(grp.userData.fx-grp.rotation.x)*.06;if(Math.abs(grp.userData.fy-grp.rotation.y)<.002)grp.userData.fy=null}
