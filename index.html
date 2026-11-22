@@ -186,7 +186,7 @@ h2,h3,.box b{font-weight:700;letter-spacing:-.01em}
 .box b{font-weight:600;color:#eaf7d5}.box small{color:#b7d99a;font-size:.8rem}
 .box:hover{outline:2px solid #62d860}
 .box.tlb{background-color:#62d860;border-color:#62d860}
-.box.tlb{grid-row:span 2;aspect-ratio:auto}
+.tlcol{grid-row:span 2;display:grid;grid-template-rows:1fr 1fr;gap:14px}.tlcol .box.tlb{aspect-ratio:auto;min-height:0}@media(max-width:560px){.tlcol{gap:8px}}
 /* timeline: same colors as the homepage tiles */
 [data-fullc]{background:#1e4630!important;color:#eaf7d5!important;box-shadow:none!important;border:0!important;font-weight:700}
 [data-fullc][aria-pressed="true"],[data-fullc]:hover{background:#2c6244!important;color:#fff!important;box-shadow:none!important}
@@ -485,7 +485,7 @@ function render(){
 function home(){
   main.innerHTML='<div class="home">'+PAGES.slice(1).map((x,i)=>({x,i,e:x[0]!=="timeline"&&x[0]!=="globe"&&!cnt(x[0])?1:0})).sort((a,b)=>a.e-b.e||a.i-b.i).map(({x:[p,t]})=>{
     const n=p==="timeline"?"Every year since 100 A.D.":p==="globe"?"See the world in any year":(cnt(p)?cnt(p)+(cnt(p)>1?" items":" item"):"Coming soon");
-    return `<button class="box${p==="timeline"?" tlb":""}" data-page="${p}" style="--c:${p==="timeline"?PAGE_HUE[p]:PAGE_HUE.pencil}"><b>${t}</b><small>${n}</small></button>`}).join("")+"</div>";
+    return `<button class="box${p==="timeline"||p==="globe"?" tlb":""}" data-page="${p}" style="--c:${p==="timeline"?PAGE_HUE[p]:PAGE_HUE.pencil}"><b>${t}</b><small>${n}</small></button>`}).join("").replace(/(<button class="box tlb" data-page="timeline"[\s\S]*?<\/button>)(<button class="box tlb" data-page="globe"[\s\S]*?<\/button>)/,'<div class="tlcol">$1$2</div>')+"</div>";
 }
 function card(s,it,i){
   const t=it.title?`<figcaption><b>${it.title}</b>${it.date?`<small class="dt2">${it.date}</small>`:""}${it.desc?`<p class="ds">${it.desc}</p>`:""}</figcaption>`:"";
