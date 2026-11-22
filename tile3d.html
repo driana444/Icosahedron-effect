@@ -4,12 +4,12 @@ import * as T from './vendor/three.module.min.js';
 let kb=[],ms2=[];const mode=new URLSearchParams(location.search).get('m')||'camera';
 const cv=document.getElementById('c');
 const r=new T.WebGLRenderer({canvas:cv,antialias:true,alpha:true});r.setPixelRatio(Math.min(devicePixelRatio,2));
-const scene=new T.Scene(),cam=new T.PerspectiveCamera(30,1,.1,50);cam.position.set(0,0,mode==="camera"?6.6:mode==="keyboard"?7.6:7.4);
+const scene=new T.Scene(),cam=new T.PerspectiveCamera(30,1,.1,50);cam.position.set(0,0,mode==="birds"?7:mode==="camera"?6.6:mode==="keyboard"?7.6:7.4);
 const LINE=new T.LineBasicMaterial({color:0x62d860});
 const fm=c=>new T.MeshBasicMaterial({color:c,polygonOffset:true,polygonOffsetFactor:1,polygonOffsetUnits:1});
 const BODY=fm(0x0b4a2a);
 {const c=document.createElement('canvas');c.width=c.height=128;const x=c.getContext('2d'),gr=x.createRadialGradient(64,64,4,64,64,64);gr.addColorStop(0,'rgba(98,216,96,.30)');gr.addColorStop(1,'rgba(98,216,96,0)');x.fillStyle=gr;x.fillRect(0,0,128,128);
- const gl=new T.Mesh(new T.PlaneGeometry(4.6,4.6),new T.MeshBasicMaterial({map:new T.CanvasTexture(c),transparent:true,depthWrite:false}));gl.position.z=-3;scene.add(gl)}
+ const gl=new T.Mesh(new T.PlaneGeometry(4.6,4.6),new T.MeshBasicMaterial({map:new T.CanvasTexture(c),transparent:true,depthWrite:false}));gl.position.z=-3;if(mode!=='birds')scene.add(gl)}
 const root=new T.Group(),g=new T.Group();root.add(g);scene.add(root);
 function part(geo,x,y,z,fill=BODY,rot,parent=g){const m=new T.Mesh(geo,fill);m.position.set(x,y,z);if(rot)m.rotation.set(rot[0],rot[1],rot[2]);m.add(new T.LineSegments(new T.EdgesGeometry(geo,25),LINE));parent.add(m);return m}
 const box=(w,h,d)=>new T.BoxGeometry(w,h,d),cyl=(a,b,h,s=40)=>new T.CylinderGeometry(a,b,h,s),X=[Math.PI/2,0,0];
@@ -31,6 +31,13 @@ if(mode==='camera'){
  part(cyl(.36,.36,.06),lx,ly,1.88,fm(0x1c8a4a),X);  // glass
  part(cyl(.18,.18,.04),lx,ly,1.92,fm(0x0b4a2a),X);  // inner element
  g.rotation.x=.18;
+}else if(mode==='birds'){
+ // flock like the one in the Edgewood video: V of small birds drifting across the sky
+ const N=[[0,0],[-.55,.32],[.55,.32],[-1.1,.64],[1.1,.64],[-1.65,.96],[1.65,.96]];
+ const flock=new T.Group();g.add(flock);
+ var birds=N.map(([x,y],i)=>{const geo=new T.BufferGeometry();geo.setAttribute('position',new T.BufferAttribute(new Float32Array(15),3));
+  const l=new T.Line(geo,new T.LineBasicMaterial({color:0x62d860}));l.position.set(x*.9,y*.9,0);l.userData={ph:i*.7};flock.add(l);return l});
+ var flockG=flock;
 }else if(mode==='model'){
  const src=new URLSearchParams(location.search).get('src');
  fetch(src).then(r=>r.arrayBuffer()).then(b=>{const u=new Uint32Array(b,0,2),nv=u[0],nf=u[1];const pos=new Float32Array(b,8,nv*3),idx=new Uint32Array(b,8+nv*12,nf*3);
@@ -44,11 +51,7 @@ if(mode==='camera'){
  part(box(1.3,.1,.24),-.55,.12,.39,KF);          // space bar
  part(box(.34,.1,.24),-1.8,.12,.39,KF);part(box(.34,.1,.24),.7,.12,.39,KF);
  for(let c=0;c<3;c++)part(box(.24,.1,.24),.98+c*.0,.12,-.45+c*.28,KF); // side keys
- // mouse
- const mg=new T.SphereGeometry(1,10,6);const ms=part(mg,2.1,.1,.3,fm(0x0b4a2a));mouse.push(ms);ms.scale.set(.38,.16,.85);
- mouse.push(part(box(.02,.02,.36),2.1,.26,-.27,fm(0x02150b)));
- mouse.push(part(cyl(.035,.035,.07,12),2.1,.275,-.2,fm(0x62d860),[0,0,Math.PI/2]));
- g.rotation.x=.62;g.position.x=-.35;
+ g.rotation.x=.62;g.position.x=0;
 }else{
  // #2 pencil
  part(cyl(.38,.38,3.6,6),0,0,0);
@@ -66,6 +69,7 @@ if(mode==='camera'){
 function size(){const w=cv.clientWidth,h=cv.clientHeight;if(cv.width!==Math.round(w*r.getPixelRatio())){r.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()}}
 (function loop(t){const f=(t||0)*.001;size();
  root.position.y=Math.sin(f*1.1)*.16;
- if(mode==='model'){g.rotation.y=f*.45}else if(mode==='keyboard'){kb.forEach((k,i)=>{k.position.y=.12+Math.max(0,Math.sin(f*2.6-k.position.x*1.6-k.position.z*1.2))*.07});ms2.forEach(m=>{m.userData.by=m.userData.by??m.position.y;m.position.y=m.userData.by+Math.sin(f*1.7+1)*.1});g.rotation.y=-.35+Math.sin(f*.6)*.45;root.rotation.z=Math.sin(f*.8)*.03}else if(mode==='camera'){g.rotation.y=-.55+Math.sin(f*.55)*.75;root.rotation.z=Math.sin(f*.8)*.04}else{g.rotation.y=f*.5;root.rotation.z=.9+Math.sin(f*.9)*.05}
+ if(mode==='birds'){const T0=(f*.2)%1;flockG.position.set(-5.4+T0*10.8,-.35+Math.sin(f*.9)*.25+(T0-.5)*-.5,0);flockG.rotation.z=-.08;
+  birds.forEach(b=>{const w=Math.sin(f*7+b.userData.ph)*.2,p=b.geometry.attributes.position;p.setXYZ(0,-.36,w,0);p.setXYZ(1,-.17,w*.35+.07,0);p.setXYZ(2,0,-.03,0);p.setXYZ(3,.17,w*.35+.07,0);p.setXYZ(4,.36,w,0);p.needsUpdate=true;b.position.y+=Math.sin(f*1.3+b.userData.ph)*.0015})}else if(mode==='model'){g.rotation.y=f*.45}else if(mode==='keyboard'){kb.forEach((k,i)=>{k.position.y=.12+Math.max(0,Math.sin(f*2.6-k.position.x*1.6-k.position.z*1.2))*.07});g.rotation.y=-.35+Math.sin(f*.6)*.45;root.rotation.z=Math.sin(f*.8)*.03}else if(mode==='camera'){g.rotation.y=-.55+Math.sin(f*.55)*.75;root.rotation.z=Math.sin(f*.8)*.04}else{g.rotation.y=f*.5;root.rotation.z=.9+Math.sin(f*.9)*.05}
  r.render(scene,cam);requestAnimationFrame(loop)})();
 </script></body></html>

@@ -216,6 +216,7 @@ h2,h3,.box b{font-weight:700;letter-spacing:-.01em}
 @media(prefers-reduced-motion:reduce){.camsvg{animation:none}}
 .home .box.cam{position:relative;overflow:hidden}
 .home .box.t3{position:relative;overflow:hidden}.home .box.t3 iframe{position:absolute;left:0;top:0;width:100%;height:62%;border:0;pointer-events:none;background:transparent}.home .box.t3>b,.home .box.t3>small{position:relative;z-index:1}
+.home .box.t3.t3-birds{background:#000!important}
 /* timeline: same colors as the homepage tiles */
 [data-fullc]{background:#1e4630!important;color:#eaf7d5!important;box-shadow:none!important;border:0!important;font-weight:700}
 [data-fullc][aria-pressed="true"],[data-fullc]:hover{background:#2c6244!important;color:#fff!important;box-shadow:none!important}
@@ -525,8 +526,8 @@ function home(){
     if(p==="timeline")return `<button class="box tlb" data-page="timeline" style="--c:${PAGE_HUE[p]}"><b>${t}</b>${calHTML()}</button>`;
     if(p==="globe")return `<button class="box tlb gbox" data-page="globe" style="--c:${PAGE_HUE[p]}"><iframe src="globe.html?preview=1" title="" tabindex="-1" aria-hidden="true" loading="lazy"></iframe><b>${t}</b></button>`;
     const n=cnt(p)?cnt(p)+(cnt(p)>1?" items":" item"):"Coming soon",L=cnt(p)?latest(p):null;
-    const t3=p==="pictures"?"camera":p==="pencil"?"pencil":p==="vlog"?"keyboard":(p==="printing"&&L&&L.model?"model":"");
-    const bg=t3?` t3" style="--c:${PAGE_HUE.pencil}`:(L&&L.img?` gt${p==="film"?" dk":""}" style="--c:${PAGE_HUE.pencil};--img:url('${L.img}')`:`" style="--c:${PAGE_HUE.pencil}`);
+    const t3=p==="pictures"?"camera":p==="pencil"?"pencil":p==="vlog"?"keyboard":p==="film"?"birds":(p==="printing"&&L&&L.model?"model":"");
+    const bg=t3?` t3${t3==="birds"?" t3-birds":""}" style="--c:${PAGE_HUE.pencil}`:(L&&L.img?` gt${p==="film"?" dk":""}" style="--c:${PAGE_HUE.pencil};--img:url('${L.img}')`:`" style="--c:${PAGE_HUE.pencil}`);
     const camSvg=t3?`<iframe src="tile3d.html?m=${t3}${t3==="model"?"&src="+L.model:""}" title="" tabindex="-1" aria-hidden="true" loading="lazy"></iframe>`:"";
     return `<button class="box${bg}" data-page="${p}">${camSvg}<b>${t}</b><small>${n}</small>${L?`<small class="lt">Latest: ${String(L.t).replace(/[<>&]/g,"")}</small>`:""}</button>`}).join("").replace(/(<button class="box tlb" data-page="timeline"[\s\S]*?<\/button>)(<button class="box tlb gbox" data-page="globe"[\s\S]*?<\/button>)/,'<div class="tlcol">$1$2</div>')+"</div>";
 }
