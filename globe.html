@@ -8,7 +8,7 @@ h1{margin:18px 0 0;text-align:center;font-size:1.1rem;letter-spacing:.12em;text-
 #yr{width:190px;font:800 3.4rem/1 Inter,system-ui,sans-serif;background:transparent;color:#62d860;border:0;border-bottom:2px solid #62d860;text-align:center;outline:0;-moz-appearance:textfield}
 #yr::-webkit-inner-spin-button{display:none}
 .sub{opacity:.7;margin:6px 0 14px;font-size:.9rem}
-input[type=range]{width:100%;accent-color:#62d860;height:28px}
+.row{display:flex;justify-content:center;align-items:center;gap:14px}.st{background:#0e3b24;color:#e9fff0;border:0;border-radius:12px;width:48px;height:48px;font-size:1.8rem;cursor:pointer}.st:hover{outline:2px solid #62d860}.lbl{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;opacity:.6;margin-top:6px}.chips.sq{gap:6px}.chips.sq button{min-width:54px;padding:8px 4px}.chips.sq,#chips{flex-wrap:wrap}
 .chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0 18px}
 .chips button{background:#0e3b24;color:#e9fff0;border:0;border-radius:10px;padding:8px 12px;font:600 .85rem inherit;cursor:pointer}
 .chips button:hover,.chips button.on{outline:2px solid #62d860;background:#145a36}
@@ -20,10 +20,9 @@ input[type=range]{width:100%;accent-color:#62d860;height:28px}
 <h1 id="h">The Icosahedron Effect · Globe timeline</h1><script>if(top!==self)document.getElementById("h").style.display="none"</script>
 <div id="stage"><canvas id="c"></canvas><div id="tip"></div></div>
 <div id="ctl">
-<input id="yr" type="number" min="100" max="2026" value="1995" aria-label="Year">
+<div class="row"><button class="st" id="prev" aria-label="Previous year">‹</button><input id="yr" type="number" min="100" max="2026" value="1995" aria-label="Year"><button class="st" id="next" aria-label="Next year">›</button></div>
 <div class="sub" id="era"></div>
-<input id="sl" type="range" min="1900" max="2026" value="1995" aria-label="Year slider">
-<div class="chips" id="chips"></div>
+<div class="lbl">Century</div><div class="chips" id="chips"></div><div class="lbl">Decade</div><div class="chips sq" id="decs"></div><div class="lbl">Year</div><div class="chips sq" id="yrs"></div>
 <div id="ev"></div>
 </div>
 <script src="vendor/topojson-client.min.js"></script>
@@ -70,17 +69,23 @@ cv.addEventListener('pointerdown',e=>{drag=true;lx=e.clientX;ly=e.clientY;cv.sty
 addEventListener('pointerup',()=>{drag=false;cv.style.cursor='grab'});
 addEventListener('pointermove',e=>{if(drag){grp.rotation.y+=(e.clientX-lx)*.006;grp.rotation.x=Math.max(-1.2,Math.min(1.2,grp.rotation.x+(e.clientY-ly)*.006));lx=e.clientX;ly=e.clientY}});
 function flyTo(ll){const tgt=Math.PI/2-(ll[1]+180)*Math.PI/180;let d=((tgt-grp.rotation.y)%(2*Math.PI)+3*Math.PI)%(2*Math.PI)-Math.PI;grp.userData.fy=grp.rotation.y+d;grp.userData.fx=ll[0]*Math.PI/180*.8}
-const yr=document.getElementById('yr'),sl=document.getElementById('sl'),ev=document.getElementById('ev'),era=document.getElementById('era'),chips=document.getElementById('chips');
-let year=1995;
-function setYear(y){y=Math.max(100,Math.min(2026,Math.round(y)||year));year=y;yr.value=y;
- const lo=Math.floor(y/100)*100;sl.min=lo;sl.max=Math.min(lo+99,2026);sl.value=y;era.textContent=eraOf(y);
- chips.querySelectorAll('button').forEach(b=>b.classList.toggle('on',+b.dataset.c===lo));
+const yr=document.getElementById('yr'),ev=document.getElementById('ev'),era=document.getElementById('era'),chips=document.getElementById('chips'),decs=document.getElementById('decs'),yrs=document.getElementById('yrs');
+let year=1995;const MAX=2026;
+const mk=(box,items,cur,fn)=>{box.innerHTML='';items.forEach(([v,l])=>{const b=document.createElement('button');b.textContent=l;if(v===cur)b.className='on';b.onclick=()=>fn(v);box.append(b)})};
+function setYear(y){y=Math.max(100,Math.min(MAX,Math.round(y)||year));year=y;yr.value=y;era.textContent=eraOf(y);
+ const c=Math.floor(y/100)*100,d=Math.floor(y/10)*10;
+ const cs=[];for(let k=100;k<=2000;k+=100)cs.push([k,k+'s']);
+ mk(chips,cs,c,k=>setYear(Math.min(MAX,k+(year%100))));
+ const ds=[];for(let k=c;k<c+100&&k<=MAX;k+=10)ds.push([k,k+'s']);
+ mk(decs,ds,d,k=>setYear(Math.min(MAX,k+(year%10))));
+ const ys=[];for(let k=d;k<d+10&&k<=MAX;k++)ys.push([k,String(k)]);
+ mk(yrs,ys,y,k=>setYear(k));
  const now=PINS.filter(p=>p.y===y);
- pinMeshes.forEach(m=>{const p=m.userData,on=p.y===y,past=p.y<y;m.visible=p.y<=y;m.material.color.set(on?0xffffff:0x62d860);m.scale.setScalar(on?1.8:.8)});
+ pinMeshes.forEach(m=>{const p=m.userData,on=p.y===y;m.visible=p.y<=y;m.material.color.set(on?0xffffff:0x62d860);m.scale.setScalar(on?1.8:.8)});
  ev.innerHTML=now.length?now.map(p=>`<div class="card"><b>${p.t}</b><small>${y} · ${p.p}</small></div>`).join(''):`<div class="none">No entries of yours in ${y} yet. Pins from earlier years stay on the globe.</div>`;
  if(now[0])flyTo(now[0].ll)}
-for(let c=1500;c<=2000;c+=100){const b=document.createElement('button');b.dataset.c=c;b.textContent=c+'s';b.onclick=()=>setYear(c+(year%100));chips.append(b)}
-yr.addEventListener('change',()=>setYear(+yr.value));sl.addEventListener('input',()=>setYear(+sl.value));
+yr.addEventListener('change',()=>setYear(+yr.value));yr.addEventListener('keydown',e=>{if(e.key==='Enter')setYear(+yr.value)});
+document.getElementById('prev').onclick=()=>setYear(year-1);document.getElementById('next').onclick=()=>setYear(year+1);
 addEventListener('keydown',e=>{if(document.activeElement===yr)return;if(e.key==='ArrowLeft')setYear(year-1);if(e.key==='ArrowRight')setYear(year+1)});
 setYear(1995);
 const ray=new T.Raycaster(),mv=new T.Vector2();
