@@ -208,6 +208,13 @@ h2,h3,.box b{font-weight:700;letter-spacing:-.01em}
 .home .box.gt::before{content:"";position:absolute;inset:0;background:var(--img) center/cover no-repeat;filter:grayscale(1) sepia(1) hue-rotate(75deg) saturate(3) brightness(.65) contrast(1.15);opacity:.9}
 .home .box.gt::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#0000 30%,#02150bf0)}
 .home .box.gt>*{position:relative;z-index:1}
+.home .box{background-size:auto!important;background-repeat:no-repeat!important}
+.home .box.gt.dk::before{filter:grayscale(1) sepia(1) hue-rotate(75deg) saturate(2.5) brightness(.38) contrast(1.1);opacity:.8}
+.home .box.gt.dk::after{background:linear-gradient(180deg,#02150b66 0%,#02150bf5 85%)}
+.camsvg{position:absolute;left:50%;top:26%;width:46%;margin-left:-23%;animation:camfloat 3.6s ease-in-out infinite;filter:drop-shadow(0 8px 10px #000a);z-index:1}
+@keyframes camfloat{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-12px) rotate(3deg)}}
+@media(prefers-reduced-motion:reduce){.camsvg{animation:none}}
+.home .box.cam{position:relative;overflow:hidden}
 /* timeline: same colors as the homepage tiles */
 [data-fullc]{background:#1e4630!important;color:#eaf7d5!important;box-shadow:none!important;border:0!important;font-weight:700}
 [data-fullc][aria-pressed="true"],[data-fullc]:hover{background:#2c6244!important;color:#fff!important;box-shadow:none!important}
@@ -517,8 +524,9 @@ function home(){
     if(p==="timeline")return `<button class="box tlb" data-page="timeline" style="--c:${PAGE_HUE[p]}"><b>${t}</b>${calHTML()}</button>`;
     if(p==="globe")return `<button class="box tlb gbox" data-page="globe" style="--c:${PAGE_HUE[p]}"><iframe src="globe.html?preview=1" title="" tabindex="-1" aria-hidden="true" loading="lazy"></iframe><b>${t}</b></button>`;
     const n=cnt(p)?cnt(p)+(cnt(p)>1?" items":" item"):"Coming soon",L=cnt(p)?latest(p):null;
-    const bg=L&&L.img?(p==="music"?` pv" style="--c:${PAGE_HUE.pencil};background-image:linear-gradient(180deg,#0000 35%,#021a0fe6),url('${L.img}')`:` gt" style="--c:${PAGE_HUE.pencil};--img:url('${L.img}')`):`" style="--c:${PAGE_HUE.pencil}`;
-    return `<button class="box${bg}" data-page="${p}"><b>${t}</b><small>${n}</small>${L?`<small class="lt">Latest: ${String(L.t).replace(/[<>&]/g,"")}</small>`:""}</button>`}).join("").replace(/(<button class="box tlb" data-page="timeline"[\s\S]*?<\/button>)(<button class="box tlb gbox" data-page="globe"[\s\S]*?<\/button>)/,'<div class="tlcol">$1$2</div>')+"</div>";
+    const bg=p==="pictures"?` cam" style="--c:${PAGE_HUE.pencil}`:(L&&L.img?` gt${p==="film"?" dk":""}" style="--c:${PAGE_HUE.pencil};--img:url('${L.img}')`:`" style="--c:${PAGE_HUE.pencil}`);
+    const camSvg=p==="pictures"?'<svg class="camsvg" viewBox="0 0 64 52" aria-hidden="true"><path d="M8 14h12l4-7h16l4 7h12a4 4 0 0 1 4 4v26a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V18a4 4 0 0 1 4-4z" fill="#0a4a2c" stroke="#62d860" stroke-width="3" stroke-linejoin="round"/><circle cx="32" cy="31" r="11" fill="#02150b" stroke="#62d860" stroke-width="3"/><circle cx="32" cy="31" r="5" fill="#62d860" opacity=".55"/><circle cx="52" cy="22" r="2" fill="#62d860"/></svg>':"";
+    return `<button class="box${bg}" data-page="${p}">${camSvg}<b>${t}</b><small>${n}</small>${L?`<small class="lt">Latest: ${String(L.t).replace(/[<>&]/g,"")}</small>`:""}</button>`}).join("").replace(/(<button class="box tlb" data-page="timeline"[\s\S]*?<\/button>)(<button class="box tlb gbox" data-page="globe"[\s\S]*?<\/button>)/,'<div class="tlcol">$1$2</div>')+"</div>";
 }
 function card(s,it,i){
   const t=it.title?`<figcaption><b>${it.title}</b>${it.date?`<small class="dt2">${it.date}</small>`:""}${it.desc?`<p class="ds">${it.desc}</p>`:""}</figcaption>`:"";
