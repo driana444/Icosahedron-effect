@@ -5,10 +5,10 @@ let kb=[],ms2=[];const mode=new URLSearchParams(location.search).get('m')||'came
 const cv=document.getElementById('c');
 const r=new T.WebGLRenderer({canvas:cv,antialias:true,alpha:true});r.setPixelRatio(Math.min(devicePixelRatio,2));
 const scene=new T.Scene(),cam=new T.PerspectiveCamera(30,1,.1,50);cam.position.set(0,0,mode==="birds"?7:mode==="camera"?6.6:mode==="keyboard"?7.6:7.4);
-const LINE=new T.LineBasicMaterial({color:0x62d860});
+const LINE=new T.LineBasicMaterial({color:0x39953a});
 const fm=c=>new T.MeshBasicMaterial({color:c,polygonOffset:true,polygonOffsetFactor:1,polygonOffsetUnits:1});
-const BODY=fm(0x0b4a2a);
-{const c=document.createElement('canvas');c.width=c.height=128;const x=c.getContext('2d'),gr=x.createRadialGradient(64,64,4,64,64,64);gr.addColorStop(0,'rgba(98,216,96,.30)');gr.addColorStop(1,'rgba(98,216,96,0)');x.fillStyle=gr;x.fillRect(0,0,128,128);
+const BODY=fm(0x062a18);
+{const c=document.createElement('canvas');c.width=c.height=128;const x=c.getContext('2d'),gr=x.createRadialGradient(64,64,4,64,64,64);gr.addColorStop(0,'rgba(60,150,58,.18)');gr.addColorStop(1,'rgba(98,216,96,0)');x.fillStyle=gr;x.fillRect(0,0,128,128);
  const gl=new T.Mesh(new T.PlaneGeometry(4.6,4.6),new T.MeshBasicMaterial({map:new T.CanvasTexture(c),transparent:true,depthWrite:false}));gl.position.z=-3;if(mode!=='birds')scene.add(gl)}
 const root=new T.Group(),g=new T.Group();root.add(g);scene.add(root);
 function part(geo,x,y,z,fill=BODY,rot,parent=g){const m=new T.Mesh(geo,fill);m.position.set(x,y,z);if(rot)m.rotation.set(rot[0],rot[1],rot[2]);m.add(new T.LineSegments(new T.EdgesGeometry(geo,25),LINE));parent.add(m);return m}
