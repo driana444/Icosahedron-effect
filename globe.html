@@ -159,6 +159,6 @@ function drawGeo(){if(PV)return;const w=cv.clientWidth,h=cv.clientHeight,dp=Math
 let _pz=false,_lt=0;addEventListener('message',e=>{if(e.data&&e.data.pz!==undefined){const was=_pz;_pz=!!e.data.pz;if(was&&!_pz)requestAnimationFrame(loop)}});
 (function loop(t){if(_pz)return;if(PV){if(t-_lt<33){requestAnimationFrame(loop);return}_lt=t}const f=(t||0)*.001;grp.position.y=Math.sin(f*1.1)*.035;dist+=(distT-dist)*.14;cam.position.z=dist;const ps=Math.max(.14,Math.pow(dist/4.1,1.4));pinMeshes.forEach(m=>m.scale.setScalar(ps*(m.userData.y?1:1)));
  if(grp.userData.fy!=null&&!drag){grp.rotation.y+=(grp.userData.fy-grp.rotation.y)*.06;grp.rotation.x+=(grp.userData.fx-grp.rotation.x)*.06;if(Math.abs(grp.userData.fy-grp.rotation.y)<.002)grp.userData.fy=null}
- else if(!drag&&dist>3.4&&!sel)grp.rotation.y+=vy*zf();
+ else if(PV&&!drag&&dist>3.4&&!sel)grp.rotation.y+=vy*zf();
  r.render(scene,cam);placeLabels();drawGeo();requestAnimationFrame(loop)})();
 </script></body></html>
