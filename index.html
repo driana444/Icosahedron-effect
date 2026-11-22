@@ -460,7 +460,7 @@ const SECTIONS={
   writers:{title:"Writer's Board",kind:"writing",items:[{title:"What Is Steven Saying?",body:"Disclosure Day wasn't the first clue. He's been saying something for a while. So, do aliens exist?"}]}
 };
 const cnt=p=>{const s=SECTIONS[p];return s.sets?s.sets.reduce((a,x)=>a+x.items.length,0):s.items.length};
-const PAGES=[["home","Home"],["timeline","Full timeline"],["pictures","Pictures"],["pencil","#2 Pencil Drawings"],["printing","3D Models"],["music","Music"],["vlog","Inserts by Dri"],["film","Film"]];
+const PAGES=[["home","Home"],["timeline","Full timeline"],["globe","Globe timeline"],["pictures","Pictures"],["pencil","#2 Pencil Drawings"],["printing","3D Models"],["music","Music"],["vlog","Inserts by Dri"],["film","Film"]];
 function drawSide(){
   $("side").innerHTML=PAGES.map(([p,t])=>{
     let h=`<button data-page="${p}"${p===page?' aria-current="page"':""}>${t}</button>`;
@@ -479,11 +479,12 @@ function render(){
   if(page!=="timeline")main.style.setProperty("--c",PAGE_HUE[page]||"#0bda51");
   if(page==="timeline")return renderTimeline();
   crumbs.innerHTML="";
+  if(page==="globe"){main.innerHTML='<iframe src="globe.html" title="Globe timeline" style="width:100%;height:calc(100vh - 150px);min-height:760px;border:0;border-radius:16px;background:#02150b"></iframe>';return}
   page==="home"?home():section(page);
 }
 function home(){
-  main.innerHTML='<div class="home">'+PAGES.slice(1).map((x,i)=>({x,i,e:x[0]!=="timeline"&&!cnt(x[0])?1:0})).sort((a,b)=>a.e-b.e||a.i-b.i).map(({x:[p,t]})=>{
-    const n=p==="timeline"?"Every year since 100 A.D.":(cnt(p)?cnt(p)+(cnt(p)>1?" items":" item"):"Coming soon");
+  main.innerHTML='<div class="home">'+PAGES.slice(1).map((x,i)=>({x,i,e:x[0]!=="timeline"&&x[0]!=="globe"&&!cnt(x[0])?1:0})).sort((a,b)=>a.e-b.e||a.i-b.i).map(({x:[p,t]})=>{
+    const n=p==="timeline"?"Every year since 100 A.D.":p==="globe"?"See the world in any year":(cnt(p)?cnt(p)+(cnt(p)>1?" items":" item"):"Coming soon");
     return `<button class="box${p==="timeline"?" tlb":""}" data-page="${p}" style="--c:${p==="timeline"?PAGE_HUE[p]:PAGE_HUE.pencil}"><b>${t}</b><small>${n}</small></button>`}).join("")+"</div>";
 }
 function card(s,it,i){
