@@ -204,6 +204,10 @@ h2,h3,.box b{font-weight:700;letter-spacing:-.01em}
 .home .box small{opacity:.8}.home .box:hover{outline:2px solid #62d860;box-shadow:0 0 18px #62d86055}
 .home .cal{color:#e9fff0}.home .cal .cm,.home .cal .cd{color:#62d860}.home .cal .td{background:#62d860;color:#02150b}
 .home .box.gbox{background-image:none}
+.home .box.gt{position:relative;overflow:hidden}
+.home .box.gt::before{content:"";position:absolute;inset:0;background:var(--img) center/cover no-repeat;filter:grayscale(1) sepia(1) hue-rotate(75deg) saturate(3) brightness(.65) contrast(1.15);opacity:.9}
+.home .box.gt::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#0000 30%,#02150bf0)}
+.home .box.gt>*{position:relative;z-index:1}
 /* timeline: same colors as the homepage tiles */
 [data-fullc]{background:#1e4630!important;color:#eaf7d5!important;box-shadow:none!important;border:0!important;font-weight:700}
 [data-fullc][aria-pressed="true"],[data-fullc]:hover{background:#2c6244!important;color:#fff!important;box-shadow:none!important}
@@ -513,7 +517,7 @@ function home(){
     if(p==="timeline")return `<button class="box tlb" data-page="timeline" style="--c:${PAGE_HUE[p]}"><b>${t}</b>${calHTML()}</button>`;
     if(p==="globe")return `<button class="box tlb gbox" data-page="globe" style="--c:${PAGE_HUE[p]}"><iframe src="globe.html?preview=1" title="" tabindex="-1" aria-hidden="true" loading="lazy"></iframe><b>${t}</b></button>`;
     const n=cnt(p)?cnt(p)+(cnt(p)>1?" items":" item"):"Coming soon",L=cnt(p)?latest(p):null;
-    const bg=L&&L.img?` pv" style="--c:${PAGE_HUE.pencil};background-image:linear-gradient(180deg,#0000 35%,#021a0fe6),url('${L.img}')`:`" style="--c:${PAGE_HUE.pencil}`;
+    const bg=L&&L.img?(p==="music"?` pv" style="--c:${PAGE_HUE.pencil};background-image:linear-gradient(180deg,#0000 35%,#021a0fe6),url('${L.img}')`:` gt" style="--c:${PAGE_HUE.pencil};--img:url('${L.img}')`):`" style="--c:${PAGE_HUE.pencil}`;
     return `<button class="box${bg}" data-page="${p}"><b>${t}</b><small>${n}</small>${L?`<small class="lt">Latest: ${String(L.t).replace(/[<>&]/g,"")}</small>`:""}</button>`}).join("").replace(/(<button class="box tlb" data-page="timeline"[\s\S]*?<\/button>)(<button class="box tlb gbox" data-page="globe"[\s\S]*?<\/button>)/,'<div class="tlcol">$1$2</div>')+"</div>";
 }
 function card(s,it,i){
