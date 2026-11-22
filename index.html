@@ -372,6 +372,10 @@ const hcard=e=>`<details class="hc"><summary><span class="arr" aria-hidden="true
 const hDay=(y,m,d)=>HISTORY.filter(e=>e.y===y&&e.m===m&&e.d===d);
 const byYear={};EVENTS.forEach(([n,y])=>(byYear[y]=byYear[y]||[]).push(n));HISTORY.forEach(e=>(byYear[e.y]=byYear[e.y]||[]).push(e.n));
 const $=id=>document.getElementById(id),main=$("main"),crumbs=$("crumbs"),dlg=$("dlg");
+/* pause animated tile iframes when scrolled off screen or tab hidden */
+{const io=new IntersectionObserver(es=>es.forEach(e=>{try{e.target.contentWindow.postMessage({pz:!e.isIntersecting},"*")}catch(_){}}),{rootMargin:"80px"});
+ const hook=()=>main.querySelectorAll(".t3 iframe,.gbox iframe").forEach(f=>{if(!f._io){f._io=1;io.observe(f)}});
+ new MutationObserver(hook).observe(main,{childList:true,subtree:true});hook()}
 let st={y:null,m:null},cur=null,curC=2000,tlScroll=0,page="home",full=true,fullC=null,zoomFrom=null,setIdx=null,lbIndex=0;
 const key=(y,m,d)=>`${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
 const hasArt=(y,m)=>Object.keys(ART).some(k=>k.startsWith(m==null?y+"-":y+"-"+String(m+1).padStart(2,"0")));
