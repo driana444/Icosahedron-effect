@@ -516,7 +516,7 @@ function latest(p){const s=SECTIONS[p];
   if(s.sets){const set=[...s.sets].filter(x=>x.items.length).sort((a,b)=>dtv(b.date)-dtv(a.date))[0];return set?{img:set.items[0].thumb||set.items[0].src,t:set.title}:null}
   const it=s.items||[];if(!it.length)return null;
   const x=it.some(i=>i.date)?[...it].sort((a,b)=>dtv(b.date)-dtv(a.date))[0]:(it.find(i=>i.latest)||it[it.length-1]);
-  return{img:x.cover||x.poster||(s.art&&s.art.poster)||"",t:x.title}}
+  return{img:x.cover||x.poster||(s.art&&s.art.poster)||"",t:x.title,model:x.model||""}}
 function calHTML(){const n=new Date(),y=n.getFullYear(),m=n.getMonth(),first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate();
   let c="";for(let i=0;i<first;i++)c+="<i></i>";for(let d=1;d<=days;d++)c+=`<i class="${d===n.getDate()?"td":""}">${d}</i>`;
   return `<span class="cal"><span class="cm">${n.toLocaleString("en-US",{month:"long"})} ${y}</span><span class="cw"><i>S</i><i>M</i><i>T</i><i>W</i><i>T</i><i>F</i><i>S</i></span><span class="cg">${c}</span><span class="cd">${n.toLocaleString("en-US",{weekday:"long"})}, ${n.toLocaleString("en-US",{month:"long"})} ${n.getDate()}</span></span>`}
@@ -525,9 +525,9 @@ function home(){
     if(p==="timeline")return `<button class="box tlb" data-page="timeline" style="--c:${PAGE_HUE[p]}"><b>${t}</b>${calHTML()}</button>`;
     if(p==="globe")return `<button class="box tlb gbox" data-page="globe" style="--c:${PAGE_HUE[p]}"><iframe src="globe.html?preview=1" title="" tabindex="-1" aria-hidden="true" loading="lazy"></iframe><b>${t}</b></button>`;
     const n=cnt(p)?cnt(p)+(cnt(p)>1?" items":" item"):"Coming soon",L=cnt(p)?latest(p):null;
-    const t3=p==="pictures"?"camera":p==="pencil"?"pencil":p==="vlog"?"keyboard":"";
+    const t3=p==="pictures"?"camera":p==="pencil"?"pencil":p==="vlog"?"keyboard":(p==="printing"&&L&&L.model?"model":"");
     const bg=t3?` t3" style="--c:${PAGE_HUE.pencil}`:(L&&L.img?` gt${p==="film"?" dk":""}" style="--c:${PAGE_HUE.pencil};--img:url('${L.img}')`:`" style="--c:${PAGE_HUE.pencil}`);
-    const camSvg=t3?`<iframe src="tile3d.html?m=${t3}" title="" tabindex="-1" aria-hidden="true" loading="lazy"></iframe>`:"";
+    const camSvg=t3?`<iframe src="tile3d.html?m=${t3}${t3==="model"?"&src="+L.model:""}" title="" tabindex="-1" aria-hidden="true" loading="lazy"></iframe>`:"";
     return `<button class="box${bg}" data-page="${p}">${camSvg}<b>${t}</b><small>${n}</small>${L?`<small class="lt">Latest: ${String(L.t).replace(/[<>&]/g,"")}</small>`:""}</button>`}).join("").replace(/(<button class="box tlb" data-page="timeline"[\s\S]*?<\/button>)(<button class="box tlb gbox" data-page="globe"[\s\S]*?<\/button>)/,'<div class="tlcol">$1$2</div>')+"</div>";
 }
 function card(s,it,i){
