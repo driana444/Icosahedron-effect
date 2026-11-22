@@ -155,7 +155,7 @@ function drawGeo(){if(PV)return;const w=cv.clientWidth,h=cv.clientHeight,dp=Math
  gx.globalAlpha=1;
  stMat.opacity=sm(3.0,2.2,dist)*.85;
  lvlEl.textContent=dist>4.3?'World':dist>2.7?'Countries':dist>1.95?'States & regions':'Cities'}
-(function loop(t){const f=(t||0)*.001;grp.position.y=Math.sin(f*1.1)*.035;dist+=(distT-dist)*.14;cam.position.z=dist;const ps=Math.max(.45,dist/4.1);pinMeshes.forEach(m=>m.scale.setScalar(ps*(m.userData.y?1:1)));
+(function loop(t){const f=(t||0)*.001;grp.position.y=Math.sin(f*1.1)*.035;dist+=(distT-dist)*.14;cam.position.z=dist;const ps=Math.max(.14,Math.pow(dist/4.1,1.4));pinMeshes.forEach(m=>m.scale.setScalar(ps*(m.userData.y?1:1)));
  if(grp.userData.fy!=null&&!drag){grp.rotation.y+=(grp.userData.fy-grp.rotation.y)*.06;grp.rotation.x+=(grp.userData.fx-grp.rotation.x)*.06;if(Math.abs(grp.userData.fy-grp.rotation.y)<.002)grp.userData.fy=null}
  else if(!drag&&dist>3.4&&!sel)grp.rotation.y+=vy*zf();
  r.render(scene,cam);placeLabels();drawGeo();requestAnimationFrame(loop)})();
