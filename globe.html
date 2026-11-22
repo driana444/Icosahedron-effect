@@ -26,13 +26,19 @@ body.pv #geo,body.pv #ui,body.pv #info,body.pv #evp{display:none!important}
 #evp{width:330px;flex:none;overflow-y:auto;background:#02150bee;border-right:1px solid #62d86088;padding:10px 10px 18px;text-align:left;z-index:4}
 #evp h2{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:#62d860;margin:2px 0 8px}
 .it{background:#0c3a23;border-radius:10px;padding:8px 10px;margin-bottom:6px;cursor:pointer;border:1px solid transparent;font-size:.82rem}.it:hover{border-color:#62d86088}.it.on{border-color:#62d860;background:#0f4a2c}.it b{display:block}.it small{opacity:.7}.it .d{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px}.it .bd{display:none;margin-top:6px}.it.on .bd{display:block}.it .bd p{margin:4px 0 6px}
-@media(max-width:700px){#stage{flex-direction:column-reverse;height:auto}#cvw{height:55vh;flex:none}#evp{width:auto;max-height:38vh;border-right:0;border-top:1px solid #62d86088}}
+canvas{touch-action:none}
+#evh{position:sticky;top:-10px;margin:-10px -10px 8px;padding:10px;background:#02150b;display:flex;align-items:center;gap:8px;z-index:2;border-bottom:1px solid #62d86044}
+#evh span{flex:1;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:#62d860;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#evb{background:none;border:1px solid #62d860;border-radius:8px;color:#e9fff0;width:30px;height:30px;font-size:1.1rem;cursor:pointer}
+#evs{position:absolute;left:12px;top:12px;z-index:3;display:none;background:#02150bcc;color:#e9fff0;border:1px solid #62d860;border-radius:10px;padding:8px 12px;font:600 .8rem Inter,system-ui,sans-serif;cursor:pointer}
+#stage.nop #evp{display:none}#stage.nop #evs{display:block}#stage.nop #info{top:56px}
+@media(max-width:700px){html,body{height:100%;overflow:hidden;overscroll-behavior:none}h1,#ctl{display:none}#stage{position:fixed;inset:0;height:auto;min-height:0;display:block}#cvw{position:absolute;inset:0;height:auto;flex:none}#evp{position:absolute;left:0;right:0;bottom:0;width:auto;height:58vh;border:0;border-top:1px solid #62d860;border-radius:16px 16px 0 0;transform:translateY(calc(100% - 54px));transition:transform .25s;z-index:6;padding-top:0}#evp.open{transform:none}#evb{display:none}#evh{cursor:pointer;top:0;margin:0 -10px 8px;padding:15px 12px 13px;border-radius:16px 16px 0 0}#evh::after{content:'\25B2';color:#62d860;font-size:.8rem}#evp.open #evh::after{content:'\25BC'}#evs{display:none!important}#stage.nop #evp{display:block}}
 body.pv{background:radial-gradient(ellipse at 50% 45%,#0f6a3c,#02150b 78%)}
 @media(max-width:600px){#info{max-width:190px;font-size:.72rem}}
 </style></head><body>
 <script>if(/[?&]preview=1/.test(location.search))document.documentElement.className=document.body.className="pv"</script>
 <h1 id="h">The Icosahedron Effect · Globe timeline</h1><script>if(top!==self)document.getElementById("h").style.display="none"</script>
-<div id="stage"><div id="evp"></div><div id="cvw"><canvas id="c"></canvas><canvas id="geo"></canvas><div id="tip"></div><div id="ui"><button id="zi" aria-label="Zoom in">+</button><button id="zo" aria-label="Zoom out">−</button><div id="lvl"></div></div><div id="info" style="display:none"></div></div></div>
+<div id="stage"><div id="evp"></div><div id="cvw"><canvas id="c"></canvas><canvas id="geo"></canvas><div id="tip"></div><div id="ui"><button id="zi" aria-label="Zoom in">+</button><button id="zo" aria-label="Zoom out">−</button><div id="lvl"></div></div><div id="info" style="display:none"></div><button id="evs" aria-label="Show timeline">&rsaquo; Timeline</button></div></div>
 <div id="ctl">
 <div class="row"><button class="st" id="prev" aria-label="Previous decade">‹</button><input id="yr" type="text" inputmode="numeric" value="1990s" aria-label="Decade" maxlength="5"><button class="st" id="next" aria-label="Next decade">›</button></div>
 <div class="sub" id="era"></div><div class="sub" id="zh" style="font-size:.8rem;opacity:.6">Scroll or pinch to zoom · click a country or state for facts</div><div class="sub" id="leg"><span style="color:#fff">●</span> Event &nbsp; <span style="color:#ffd24a">●</span> Group &nbsp; <span style="color:#ff8a5c">●</span> Person</div><div id="src"></div><div id="atl" class="note" style="font-size:.72rem;opacity:.65;text-align:left;margin-top:8px">Atlas layer: country shapes from Natural Earth via world-atlas (public domain); U.S. state shapes from the U.S. Census Bureau via us-atlas; country facts from mledoze/countries (ODbL 1.0); populations from country-json (approximate, c. 2018); cities from GeoNames (CC BY 4.0) via all-the-cities. Borders are modern.</div>
@@ -74,7 +80,7 @@ const stMat=new T.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false
 const pinMeshes=[];
 PINS.forEach(p=>{const m=new T.Mesh(new T.SphereGeometry(.03,12,8),new T.MeshBasicMaterial({color:COL[p.tag]||0xffffff}));m.position.copy(ll2v(p.ll[0],p.ll[1],1.02));m.userData=p;m.visible=false;grp.add(m);pinMeshes.push(m)});
 grp.rotation.y=-1.0;grp.rotation.x=.3;
-function size(){const w=cv.clientWidth,h=cv.clientHeight;r.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()}addEventListener('resize',size);size();
+let AK=1;function size(){const w=cv.clientWidth,h=cv.clientHeight;AK=(typeof PV!=='undefined'&&PV)?1:Math.max(1,.9/(w/h));r.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()}addEventListener('resize',size);size();
 let drag=false,lx=0,ly=0,vy=.0016,t0=0,moved=0,dist=4.1,distT=4.1;const DMIN=1.35,DMAX=7,ptrs=new Map();let pinch0=0,pinchD0=0;
 const zf=()=>Math.pow(dist/4.1,1.1);
 cv.addEventListener('pointerdown',e=>{ptrs.set(e.pointerId,[e.clientX,e.clientY]);if(ptrs.size===1){drag=true;moved=0;lx=e.clientX;ly=e.clientY;cv.style.cursor='grabbing'}else if(ptrs.size===2){drag=false;const [a,b]=[...ptrs.values()];pinch0=Math.hypot(a[0]-b[0],a[1]-b[1]);pinchD0=distT}});
@@ -90,9 +96,12 @@ const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 function step(k){const i=DECS.indexOf(dec)+k;setDec(DECS[Math.max(0,Math.min(DECS.length-1,i))])}
 const evp=document.getElementById('evp');let selPin=-1;
 const hex=n=>'#'+(n||0xffffff).toString(16).padStart(6,'0');
-if(!PV){evp.innerHTML='<h2>Timeline \u00b7 '+PINS.length+' entries</h2>'+PINS.map((p,i)=>`<div class="it" id="it${i}" data-i="${i}"><b><span class="d" style="background:${hex(COL[p.tag])}"></span>${esc(p.t)}</b><small>${esc(p.d)}${p.p?" \u00b7 "+esc(p.p):""}</small><div class="bd"><p>${esc(p.x)}</p>${p.who?`<div class="cit">${esc(p.who)}</div>`:''}${p.pin?`<div class="cit">Pin: ${esc(p.pin)}</div>`:''}${p.s.map(q=>`<div class="cit">${esc(q.c)} <a href="${q.u}" target="_blank" rel="noopener">link</a></div>`).join('')}</div></div>`).join('')+'<p class="note">Entries are Dri\u2019s research notes; the sources listed support them (accessed November 22, 2026). Country borders shown are modern.</p>';
+if(!PV){evp.innerHTML='<div id="evh"><span id="evt">Timeline \u00b7 '+PINS.length+' entries</span><button id="evb" aria-label="Hide timeline">\u2039</button></div>'+PINS.map((p,i)=>`<div class="it" id="it${i}" data-i="${i}"><b><span class="d" style="background:${hex(COL[p.tag])}"></span>${esc(p.t)}</b><small>${esc(p.d)}${p.p?" \u00b7 "+esc(p.p):""}</small><div class="bd"><p>${esc(p.x)}</p>${p.who?`<div class="cit">${esc(p.who)}</div>`:''}${p.pin?`<div class="cit">Pin: ${esc(p.pin)}</div>`:''}${p.s.map(q=>`<div class="cit">${esc(q.c)} <a href="${q.u}" target="_blank" rel="noopener">link</a></div>`).join('')}</div></div>`).join('')+'<p class="note">Entries are Dri\u2019s research notes; the sources listed support them (accessed November 22, 2026). Country borders shown are modern. Atlas layer: country shapes from Natural Earth via world-atlas (public domain); U.S. state shapes from the U.S. Census Bureau via us-atlas; country facts from mledoze/countries (ODbL 1.0); populations from country-json (approximate, c. 2018); cities from GeoNames (CC BY 4.0) via all-the-cities.</p>';
+ const mob=()=>matchMedia('(max-width:700px)').matches,evt=document.getElementById('evt');
+ document.getElementById('evb').onclick=e=>{e.stopPropagation();stage.classList.add('nop');size()};document.getElementById('evs').onclick=()=>{stage.classList.remove('nop');size()};
+ document.getElementById('evh').onclick=()=>{if(mob())evp.classList.toggle('open')};
  evp.addEventListener('click',e=>{if(e.target.closest('a'))return;const it=e.target.closest('.it');if(it)selectPin(+it.dataset.i,true)})}
-function selectPin(i,fromList){selPin=(fromList&&selPin===i)?-1:i;document.querySelectorAll('.it.on').forEach(x=>x.classList.remove('on'));if(selPin<0)return;const it=document.getElementById('it'+i);it.classList.add('on');const p=PINS[i];sel=null;showInfo();flyTo(p.ll);distT=Math.min(distT,2.4);if(!fromList)evp.scrollTo({top:it.offsetTop-evp.offsetTop-6,behavior:'smooth'})}
+function selectPin(i,fromList){selPin=(fromList&&selPin===i)?-1:i;document.querySelectorAll('.it.on').forEach(x=>x.classList.remove('on'));const mb=matchMedia('(max-width:700px)').matches,et=document.getElementById('evt');if(selPin<0){if(et)et.textContent='Timeline \u00b7 '+PINS.length+' entries';return}if(et&&mb)et.textContent=PINS[i].t;if(mb){if(fromList)evp.classList.remove('open');else evp.classList.add('open')}const it=document.getElementById('it'+i);it.classList.add('on');const p=PINS[i];sel=null;showInfo();flyTo(p.ll);distT=Math.min(distT,2.4);if(!fromList)evp.scrollTo({top:it.offsetTop-evp.offsetTop-6,behavior:'smooth'})}
 function setDec(d){d=near(Math.floor((+d||dec)/10)*10);dec=d;yr.value=d+'s';
  const now=PINS.filter(p=>p.y>=d&&p.y<d+10);era.textContent=PV?now.length+(now.length===1?' event':' events')+' pinned':now.length+(now.length===1?' entry':' entries')+' in the '+d+'s · '+PINS.length+' pinned in all';
  pinMeshes.forEach(m=>{m.visible=PV?(m.userData.y>=d&&m.userData.y<d+10):true});
@@ -141,7 +150,7 @@ const sm=(a,b,x)=>{const t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*(3-2*t
 const lvlEl=document.getElementById('lvl'),wcache={};
 function drawGeo(){if(PV)return;const w=cv.clientWidth,h=cv.clientHeight,dp=Math.min(devicePixelRatio,2);if(gc.width!==Math.round(w*dp)||gc.height!==Math.round(h*dp)){gc.width=Math.round(w*dp);gc.height=Math.round(h*dp);gc.style.width=w+'px';gc.style.height=h+'px'}
  gx.setTransform(dp,0,0,dp,0,0);gx.clearRect(0,0,w,h);grp.updateMatrixWorld(true);
- const rects=[],horizon=1/dist;
+ const rects=[],horizon=1/(dist*AK);
  function proj(lat,lon){vv.copy(ll2v(lat,lon,1.004)).applyMatrix4(grp.matrixWorld);if(vv.z<horizon+.04)return null;const fade=Math.min(1,(vv.z-horizon-.04)*5);const q=vv.clone().project(cam);return{x:(q.x+1)/2*w,y:(1-q.y)/2*h,fade}}
  function label(text,lat,lon,font,color,alpha,o={}){const p=proj(lat,lon);if(!p||alpha<=.02)return false;gx.font=font;const key=font+text;const tw=(wcache[key]=wcache[key]||gx.measureText(text).width)+(o.dot?10:0),th=parseInt(font.match(/(\d+)px/)[1]);
   let x=p.x-tw/2,y=p.y;if(o.dot)x=p.x+6;const r_={x:x-3,y:y-th/2-2,w:tw+6,h:th+4};if(r_.x<2||r_.x+r_.w>w-2||r_.y<2||r_.y+r_.h>h-2)return false;for(const q of rects)if(r_.x<q.x+q.w&&r_.x+r_.w>q.x&&r_.y<q.y+q.h&&r_.y+r_.h>q.y)return false;rects.push(r_);
@@ -165,7 +174,7 @@ function drawGeo(){if(PV)return;const w=cv.clientWidth,h=cv.clientHeight,dp=Math
  stMat.opacity=sm(3.0,2.2,dist)*.85;
  lvlEl.textContent=dist>4.3?'World':dist>2.7?'Countries':dist>1.95?'States & regions':'Cities'}
 let _pz=false,_lt=0;addEventListener('message',e=>{if(e.data&&e.data.pz!==undefined){const was=_pz;_pz=!!e.data.pz;if(was&&!_pz)requestAnimationFrame(loop)}});
-(function loop(t){if(_pz)return;if(PV){if(t-_lt<33){requestAnimationFrame(loop);return}_lt=t}const f=(t||0)*.001;grp.position.y=PV?Math.sin(f*1.1)*.035:0;dist+=(distT-dist)*.14;cam.position.z=dist;const ps=Math.max(.14,Math.pow(dist/4.1,1.4));pinMeshes.forEach((m,i)=>m.scale.setScalar(ps*(i===selPin?2.2:1)));
+(function loop(t){if(_pz)return;if(PV){if(t-_lt<33){requestAnimationFrame(loop);return}_lt=t}const f=(t||0)*.001;grp.position.y=PV?Math.sin(f*1.1)*.035:0;dist+=(distT-dist)*.14;cam.position.z=dist*AK;const ps=Math.max(.14,Math.pow(dist/4.1,1.4))*AK;pinMeshes.forEach((m,i)=>m.scale.setScalar(ps*(i===selPin?2.2:1)));
  if(grp.userData.fy!=null&&!drag){grp.rotation.y+=(grp.userData.fy-grp.rotation.y)*.06;grp.rotation.x+=(grp.userData.fx-grp.rotation.x)*.06;if(Math.abs(grp.userData.fy-grp.rotation.y)<.002)grp.userData.fy=null}
  else if(PV&&!drag&&dist>3.4&&!sel)grp.rotation.y+=vy*zf();
  r.render(scene,cam);placeLabels();drawGeo();requestAnimationFrame(loop)})();
