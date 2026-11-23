@@ -186,7 +186,7 @@ h2,h3,.box b{font-weight:700;letter-spacing:-.01em}
 .box b{font-weight:600;color:#eaf7d5}.box small{color:#b7d99a;font-size:.8rem}
 .box:hover{outline:2px solid #62d860}
 .box.tlb{background-color:#62d860;border-color:#62d860}
-.dpick{grid-template-columns:repeat(5,1fr)!important;gap:8px!important}.dpick button{font-size:1rem!important;padding:12px 4px!important}.dpick button.on{outline:3px solid #fff}@media(min-width:700px){.tl.evgrid.dtl{grid-template-columns:repeat(5,1fr)!important}}.tl.evgrid.dtl .yb{aspect-ratio:auto!important;min-height:84px}.tl.evgrid.dtl .yb small{font-size:.72rem}.tlcol{grid-row:span 2;display:grid;grid-template-rows:3.4fr .9fr 2.4fr;gap:10px;min-height:0}.tlcol .box{aspect-ratio:auto;min-height:0}.box.bio-t{justify-content:center!important;padding-top:4px;padding-bottom:4px}.box.bio-t small{display:none}.home .box.tlb .cal{gap:1px;margin-top:2px}.home .box.tlb .cal i{font-size:.6rem;line-height:1.5;aspect-ratio:auto}.home .box.tlb .cal .cm{font-size:.85rem}.home .box.tlb .cal .cd{display:none}.home .box.tlb b{font-size:1.25rem}.bio{max-width:640px;margin:0 auto;text-align:left;line-height:1.65}.bio h2{margin:6px 0 14px}.bio p{margin:0 0 14px}@media(max-width:560px){.tlcol{gap:8px}}
+.tlcol{grid-row:span 2;display:grid;grid-template-rows:3.4fr .9fr 2.4fr;gap:10px;min-height:0}.tlcol .box{aspect-ratio:auto;min-height:0}.box.bio-t{justify-content:center!important;padding-top:4px;padding-bottom:4px}.box.bio-t small{display:none}.home .box.tlb .cal{gap:1px;margin-top:2px}.home .box.tlb .cal i{font-size:.6rem;line-height:1.5;aspect-ratio:auto}.home .box.tlb .cal .cm{font-size:.85rem}.home .box.tlb .cal .cd{display:none}.home .box.tlb b{font-size:1.25rem}.bio{max-width:640px;margin:0 auto;text-align:left;line-height:1.65}.bio h2{margin:6px 0 14px}.bio p{margin:0 0 14px}@media(max-width:560px){.tlcol{gap:8px}}
 
 .box.pv{background-size:cover!important;background-position:center!important;background-repeat:no-repeat!important}
 .box .lt{opacity:.9;font-size:.7rem;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
@@ -452,23 +452,19 @@ function renderTimeline(){
   if(y==null)return timeline();
   m==null?year(y):month(y,m);
 }
-let curD=null;
 function timeline(){
   if(full)return fullView();
   let h=featured()+search();
-  const c=curC;
-  if(curD==null||Math.floor(curD/100)*100!==c){const ev=Object.keys(byYear).map(Number).filter(y=>y>=c&&y<c+100&&y<=NOW);curD=ev.length?Math.floor(Math.max(...ev)/10)*10:c}
-  h+=`<h2 class="c" id="c${c}">${c}'s</h2><div class="cpick dpick">`;
-  for(let d=c;d<c+100&&d<=NOW;d+=10)h+=`<button data-dec="${d}" class="${d===curD?"on":""}" style="--c:${hue(c)}" aria-label="${d}s">${d}s</button>`;
-  h+=`</div><h3 class="c" style="margin:14px 0 8px">${curD}s</h3><div class="tl evgrid dtl">`;
-  for(let i=0;i<10;i++){
-    const y=curD+i;if(y>NOW)break;const ev=byYear[y];
-    h+=`<button class="yb${ev?" ev":""}${hasArt(y)?" art":""}" data-y="${y}" aria-label="${y}${ev?": "+ev.join(", "):""}"><b>${y}</b>${ev?`<small>${ev.join(", ")}</small>`:""}</button>`;
+  for(const c of [curC]){
+    h+=`<h2 class="c" id="c${c}">${c}'s</h2><div class="tl">`;
+    for(let i=0;i<100;i++){
+      const y=c+i;if(y>NOW)break;const ev=byYear[y];
+      h+=`<button class="yb${ev?" ev":""}${hasArt(y)?" art":""}" data-y="${y}" aria-label="${y}${ev?": "+ev.join(", "):""}"><b>${y}</b>${ev?`<small>${ev.join(", ")}</small>`:""}</button>`;
+    }
+    h+="</div>";
   }
-  h+="</div>";
   main.innerHTML=h;
   main.querySelectorAll(".yb").forEach(b=>b.onclick=()=>go(+b.dataset.y,null));
-  main.querySelectorAll("[data-dec]").forEach(b=>b.onclick=()=>{curD=+b.dataset.dec;render()});
 }
 function year(y){
   const ev=byYear[y];
