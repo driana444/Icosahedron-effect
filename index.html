@@ -186,7 +186,7 @@ h2,h3,.box b{font-weight:700;letter-spacing:-.01em}
 .box b{font-weight:600;color:#eaf7d5}.box small{color:#b7d99a;font-size:.8rem}
 .box:hover{outline:2px solid #62d860}
 .box.tlb{background-color:#62d860;border-color:#62d860}
-.tlcol{grid-row:span 2;display:grid;grid-template-rows:3.4fr .9fr 2.4fr;gap:10px;min-height:0}.tlcol .box{aspect-ratio:auto;min-height:0}.box.bio-t{justify-content:center!important;padding-top:4px;padding-bottom:4px}.box.bio-t small{display:none}.home .box.tlb .cal{gap:1px;margin-top:2px}.home .box.tlb .cal i{font-size:.6rem;line-height:1.5;aspect-ratio:auto}.home .box.tlb .cal .cm{font-size:.85rem}.home .box.tlb .cal .cd{display:none}.home .box.tlb b{font-size:1.25rem}.bio{max-width:640px;margin:0 auto;text-align:left;line-height:1.65}.bio h2{margin:6px 0 14px}.bio p{margin:0 0 14px}@media(max-width:560px){.tlcol{gap:8px}}
+.tlcol{grid-row:span 2;display:grid;grid-template-rows:2fr 1fr;gap:14px;min-height:0}.tlcol:has(.bio-t){grid-template-rows:3.4fr .9fr 2.4fr;gap:10px}.tlcol .box{aspect-ratio:auto;min-height:0}.box.bio-t{justify-content:center!important;padding-top:4px;padding-bottom:4px}.box.bio-t small{display:none}.home .box.tlb .cal{gap:1px;margin-top:2px}.home .box.tlb .cal i{font-size:.6rem;line-height:1.5;aspect-ratio:auto}.home .box.tlb .cal .cm{font-size:.85rem}.home .box.tlb .cal .cd{display:none}.home .box.tlb b{font-size:1.25rem}.bio{max-width:640px;margin:0 auto;text-align:left;line-height:1.65}.bio h2{margin:6px 0 14px}.bio p{margin:0 0 14px}@media(max-width:560px){.tlcol{gap:8px}}
 
 .box.pv{background-size:cover!important;background-position:center!important;background-repeat:no-repeat!important}
 .box .lt{opacity:.9;font-size:.7rem;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
@@ -517,7 +517,9 @@ const SECTIONS={
   writers:{title:"Writer's Board",kind:"writing",items:[{title:"What Is Steven Saying?",body:"Disclosure Day wasn't the first clue. He's been saying something for a while. So, do aliens exist?"}]}
 };
 const cnt=p=>{const s=SECTIONS[p];return s.sets?s.sets.reduce((a,x)=>a+x.items.length,0):s.items.length};
-const PAGES=[["home","Home"],["timeline","Timeline"],["bio","By Dri"],["globe","Globe"],["pictures","Pictures"],["pencil","#2 Pencil Drawings"],["printing","3D Models"],["music","Music"],["vlog","Inserts by Dri"],["film","Film"]];
+const SHOW_BIO=false;/* set true to show the By Dri tile + sidebar link */
+const PAGES=[["home","Home"],["timeline","Timeline"],["globe","Globe"],["pictures","Pictures"],["pencil","#2 Pencil Drawings"],["printing","3D Models"],["music","Music"],["vlog","Inserts by Dri"],["film","Film"]];
+if(SHOW_BIO)PAGES.splice(PAGES.findIndex(x=>x[0]==="globe"),0,["bio","By Dri"]);
 function drawSide(){
   $("side").innerHTML=PAGES.map(([p,t])=>{
     let h=`<button data-page="${p}"${p===page?' aria-current="page"':""}>${t}</button>`;
@@ -559,7 +561,7 @@ function home(){
     const t3=p==="pictures"?"camera":p==="pencil"?"pencil":p==="vlog"?"keyboard":p==="film"?"birds":(p==="printing"&&L&&L.model?"model":"");
     const bg=t3?` t3${t3==="birds"?" t3-birds":""}" style="--c:${PAGE_HUE.pencil}`:(L&&L.img?` gt${p==="film"?" dk":""}" style="--c:${PAGE_HUE.pencil};--img:url('${L.img}')`:`" style="--c:${PAGE_HUE.pencil}`);
     const camSvg=t3?`<iframe src="tile3d.html?m=${t3}${t3==="model"?"&src="+L.model:""}" title="" tabindex="-1" aria-hidden="true" loading="lazy"></iframe>`:"";
-    return `<button class="box${bg}" data-page="${p}">${camSvg}<b>${t}</b><small>${n}</small>${L?`<small class="lt">Latest: ${String(L.t).replace(/[<>&]/g,"")}</small>`:""}</button>`}).join("").replace(/(<button class="box tlb" data-page="timeline"[\s\S]*?<\/button>)(<button class="box tlb bio-t" data-page="bio"[\s\S]*?<\/button>)(<button class="box tlb gbox" data-page="globe"[\s\S]*?<\/button>)/,'<div class="tlcol">$1$2$3</div>')+"</div>";
+    return `<button class="box${bg}" data-page="${p}">${camSvg}<b>${t}</b><small>${n}</small>${L?`<small class="lt">Latest: ${String(L.t).replace(/[<>&]/g,"")}</small>`:""}</button>`}).join("").replace(/(<button class="box tlb" data-page="timeline"[\s\S]*?<\/button>)(<button class="box tlb bio-t" data-page="bio"[\s\S]*?<\/button>)?(<button class="box tlb gbox" data-page="globe"[\s\S]*?<\/button>)/,'<div class="tlcol">$1$2$3</div>')+"</div>";
 }
 function card(s,it,i){
   const t=it.title?`<figcaption><b>${it.title}</b>${it.date?`<small class="dt2">${it.date}</small>`:""}${it.desc?`<p class="ds">${it.desc}</p>`:""}</figcaption>`:"";
